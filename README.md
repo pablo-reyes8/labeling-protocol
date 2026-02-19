@@ -1,145 +1,69 @@
-# Protocolo de etiquetado (bbox)
+# Etiquetado De Imagenes Para Modelo De Envejecimiento
 
-Proyecto simple para etiquetar imagenes con bounding boxes, guardar JSON local y subir automaticamente ese JSON a Google Drive (sin subir la imagen).
+Este repositorio es para que varias personas etiqueten fotos con bounding boxes.
+Cada etiquetado se guarda en JSON y se sube a Drive (solo JSON, nunca la imagen).
 
-## Que hace
+## Antes De Empezar
 
-- Abre una interfaz para etiquetar una imagen.
-- Guarda el resultado en `results/*.json`.
-- Sube el JSON al Web App de Google Apps Script (Drive).
-- Si pasas una carpeta (`data`) y `num_images > 1`, selecciona imagenes aleatorias.
-- Con upload activo, intenta reservar imagenes en Drive para reducir duplicados entre usuarios.
-
-## Requisitos
-
-- Python 3.10+
-- `pip`
-
-## Instalacion (una sola vez)
+1. Abre una terminal en esta carpeta.
+2. Instala dependencias:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Estructura importante
+## Opcion Recomendada (Jupyter)
 
-- `annotate_jupyter.ipynb`: flujo para Jupyter.
-- `annotate_ide.py`: flujo para correr en IDE.
-- `annotate_cli.py`: flujo por consola.
-- `src/envegecimiento/run_annotation.py`: pipeline principal.
-- `src/envegecimiento/preview_boxes_from_json.py`: dibuja boxes desde JSON.
-- `results/`: JSON locales.
-- `data_boxes/`: previews con boxes (se crea automatico).
+Archivo: `annotate_jupyter.ipynb`
 
-## 1) Uso en Jupyter
+1. Abre el notebook.
+2. Ejecuta las celdas en orden.
+3. Cambia solo estos valores cuando te lo pida:
+   - Ruta de imagen o carpeta (por ejemplo `data`)
+   - Cantidad de imagenes a etiquetar
+4. Etiqueta y guarda cuando aparezca la ventana.
 
-Instala dependencias primero (si no lo hiciste):
+## Opcion IDE (Script Python)
 
-```bash
-pip install -r requirements.txt
-```
+Archivo: `annotate_ide.py`
 
-En una celda:
-
-```python
-import importlib
-import sys
-from pathlib import Path
-
-SRC_DIR = Path("src").resolve()
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
-
-import envegecimiento.external_bbox_annotator as external_bbox_annotator
-import envegecimiento.run_annotation as run_annotation
-
-importlib.reload(external_bbox_annotator)
-importlib.reload(run_annotation)
-```
-
-Ejemplo de corrida:
-
-```python
-NUM_IMAGES = 2
-result = run_annotation.run("data", num_images=NUM_IMAGES)
-result
-```
-
-Preview desde un JSON:
-
-```python
-from envegecimiento.preview_boxes_from_json import show_boxes_from_json
-
-preview = show_boxes_from_json("results/tu_archivo_annotations.json")
-preview
-```
-
-## 2) Uso en IDE (script)
-
-Instala dependencias primero (si no lo hiciste):
-
-```bash
-pip install -r requirements.txt
-```
-
-Edita en `annotate_ide.py`:
-
-- `IMAGE_PATH = r"data"` (carpeta o imagen)
-- `NUM_IMAGES = 1` (o mas)
-
-Luego ejecuta:
+1. Abre `annotate_ide.py`.
+2. Cambia:
+   - `IMAGE_PATH` (ejemplo: `r"data"`)
+   - `NUM_IMAGES` (cuantas quieres etiquetar)
+3. Ejecuta:
 
 ```bash
 python annotate_ide.py
 ```
 
-## 3) Uso por consola (CLI)
+## Opcion Consola (CLI)
 
-Instala dependencias primero (si no lo hiciste):
+Archivo: `annotate_cli.py`
+
+Ejemplo:
 
 ```bash
-pip install -r requirements.txt
+python annotate_cli.py data --count 2
 ```
 
-Ejemplos:
+Si quieres una sola imagen especifica:
 
 ```bash
-python annotate_cli.py data --count 3
 python annotate_cli.py "data/mi_imagen.jpg"
-python annotate_cli.py data --count 2 --no-upload
 ```
 
-## Parametros principales
+## Que Se Guarda
 
-En `run_annotation.run(...)`:
+- JSON local en `results/`
+- JSON remoto en Drive con nombre de la imagen
+- Preview de boxes en `data_boxes/`
 
-- `image_path` (str): ruta de imagen o carpeta.
-- `num_images` (int): cuantas imagenes etiquetar en secuencia.
-- `output_json_path` (str | None): solo para `num_images=1`.
-- `reference_dir` (str | None): carpeta de referencias (opcional).
-- `upload_to_drive` (bool): si sube o no el JSON.
-- `drive_webapp_url` (str | None): URL `/exec` de Apps Script.
-- `drive_api_token` (str | None): token compartido con Apps Script.
-- `fail_on_upload_error` (bool): si corta el flujo cuando falla upload.
+Ejemplo de preview ya generado:
 
-## Variables de entorno opcionales
+- `data_boxes/portrait-white-man-isolated_boxes_preview.jpg`
 
-Puedes definirlas para no hardcodear en codigo:
+## Si Algo Falla
 
-```bash
-# Linux/Mac
-export ANNOTATION_DRIVE_WEBAPP_URL="https://script.google.com/macros/s/XXXX/exec"
-export ANNOTATION_DRIVE_API_TOKEN="tu_token"
-```
-
-```powershell
-# Windows PowerShell
-setx ANNOTATION_DRIVE_WEBAPP_URL "https://script.google.com/macros/s/XXXX/exec"
-setx ANNOTATION_DRIVE_API_TOKEN "tu_token"
-```
-
-## Salidas
-
-- JSON local: `results/<nombre_imagen>_annotations.json`
-- JSON remoto en Drive: `<nombre_imagen>.json`
-- Preview de boxes: `data_boxes/<nombre_imagen>_boxes_preview.jpg`
+- Revisa que corriste `pip install -r requirements.txt`.
+- Revisa que estas ejecutando desde la carpeta raiz del proyecto.
