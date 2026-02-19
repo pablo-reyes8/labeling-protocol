@@ -1,14 +1,23 @@
-# Guia Rapida De Etiquetado Facial
+# Guia De Etiquetado Facial para Deep Learning
 
-Bienvenido/a. Esta guia es para personas que van a **etiquetar imagenes** para apoyar un modelo de Deep Learning de envejecimiento.
+Gracias por ayudarnos a construir un dataset de **imágenes etiquetadas** para entrenar un modelo de Deep Learning enfocado en **envejecimiento facial**.
 
-Solo necesitas abrir el anotador, marcar las cajas y guardar. El sistema genera un JSON y lo sube a Drive.
+Tu tarea es muy sencilla: vas a abrir el anotador, dibujar unas cajas sobre partes clave del rostro y guardar los cambios.  
+Cada vez que guardas, la herramienta genera automáticamente un archivo con la información de la anotación y lo envía al repositorio del proyecto para que podamos usarlo en el entrenamiento.
 
-## Asi Se Ve Una Anotacion 🖼️
+No necesitas conocimientos técnicos: solo precisión y consistencia al marcar las cajas ✅
 
-![Ejemplo de anotacion 1](data_boxes/confident-woman-business-owener-wearing-apron-face-portrait_boxes_preview.jpg)
 
-![Ejemplo de anotacion 2](data_boxes/smiling-businessman-face-portrait-wearing-suit_boxes_preview.jpg)
+## Así se ve una anotación 
+
+<div align="center">
+
+| Ejemplo de anotación 1 | Ejemplo de anotación 2 |
+|---|---|
+| <img src="data_boxes/confident-woman-business-owener-wearing-apron-face-portrait_boxes_preview.jpg" width="460" /> | <img src="data_boxes/smiling-businessman-face-portrait-wearing-suit_boxes_preview.jpg" width="460" /> |
+
+</div>
+
 
 ## Inicio En 2 Minutos ⚡
 
@@ -23,7 +32,9 @@ pip install -r requirements.txt
 
 ## Opcion Recomendada: Jupyter
 
-En el notebook usa estos chunks.
+Nosotros te proporcionamos un Jupyter Notebook listo para ejecutar: `annotate_jupyter.ipynb`. 
+
+Pero si quieres crear uno nuevo deberas usa estos chunks:
 
 ### Chunk 1: Cargar modulos
 
