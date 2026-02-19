@@ -1,0 +1,382 @@
+{
+  "image_id": "portrait-white-man-isolated.jpg",
+  "image_meta": {
+    "filename": "portrait-white-man-isolated.jpg",
+    "stem": "portrait-white-man-isolated",
+    "extension": ".jpg",
+    "file_size_bytes": 11715442,
+    "width_px": 4950,
+    "height_px": 3852,
+    "modified_at": "2026-02-19T05:12:10Z"
+  },
+  "created_at": "2026-02-19T05:52:32Z",
+  "global": {
+    "label_id": 0,
+    "score": 50,
+    "ethnicity": "Hombre Blanco"
+  },
+  "regions": {
+    "frente": {
+      "label_id": 1,
+      "region_name": "Frente",
+      "region_alias": "Frente",
+      "expected_boxes": 1,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 1750,
+            "y": 897,
+            "w": 1247,
+            "h": 454
+          },
+          "score": 30,
+          "ethnicity": "Hombre Blanco",
+          "omitted": false
+        }
+      ]
+    },
+    "glabela_entrecejo": {
+      "label_id": 2,
+      "region_name": "Glabela / Entrecejo",
+      "region_alias": "Entrecejo",
+      "expected_boxes": 1,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 2235,
+            "y": 1320,
+            "w": 301,
+            "h": 289
+          },
+          "score": 25,
+          "ethnicity": "Hombre Blanco",
+          "omitted": false
+        }
+      ]
+    },
+    "patas_de_gallo": {
+      "label_id": 3,
+      "region_name": "Patas de gallo",
+      "region_alias": "Patas de gallo",
+      "expected_boxes": 2,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 1677,
+            "y": 1449,
+            "w": 178,
+            "h": 228
+          },
+          "score": 0,
+          "ethnicity": "Hombre Blanco",
+          "omitted": false
+        },
+        {
+          "box_index": 2,
+          "bbox": null,
+          "score": null,
+          "ethnicity": "Hombre Blanco",
+          "omitted": true
+        }
+      ]
+    },
+    "bajo_ojo_ojeras": {
+      "label_id": 4,
+      "region_name": "Bajo ojo / Ojeras",
+      "region_alias": "Ojeras",
+      "expected_boxes": 2,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 1849,
+            "y": 1640,
+            "w": 356,
+            "h": 184
+          },
+          "score": 20,
+          "ethnicity": "Hombre Blanco",
+          "omitted": false
+        },
+        {
+          "box_index": 2,
+          "bbox": null,
+          "score": null,
+          "ethnicity": "Hombre Blanco",
+          "omitted": true
+        }
+      ]
+    },
+    "surcos_nasogenianos": {
+      "label_id": 5,
+      "region_name": "Surcos Nasogenianos",
+      "region_alias": "Surcos nasogenianos",
+      "expected_boxes": 2,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 1935,
+            "y": 1941,
+            "w": 233,
+            "h": 313
+          },
+          "score": 10,
+          "ethnicity": "Hombre Blanco",
+          "omitted": false
+        },
+        {
+          "box_index": 2,
+          "bbox": null,
+          "score": null,
+          "ethnicity": "Hombre Blanco",
+          "omitted": true
+        }
+      ]
+    },
+    "labio_superior": {
+      "label_id": 6,
+      "region_name": "Labio superior",
+      "region_alias": "Labio superior",
+      "expected_boxes": 1,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 1990,
+            "y": 2027,
+            "w": 761,
+            "h": 221
+          },
+          "score": 20,
+          "ethnicity": "Hombre Blanco",
+          "omitted": false
+        }
+      ]
+    },
+    "comisuras_lineas_marioneta": {
+      "label_id": 7,
+      "region_name": "Comisuras / lineas de marioneta",
+      "region_alias": "Lineas marioneta",
+      "expected_boxes": 2,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 1695,
+            "y": 2100,
+            "w": 418,
+            "h": 547
+          },
+          "score": 15,
+          "ethnicity": "Hombre Blanco",
+          "omitted": false
+        },
+        {
+          "box_index": 2,
+          "bbox": null,
+          "score": null,
+          "ethnicity": "Hombre Blanco",
+          "omitted": true
+        }
+      ]
+    },
+    "puente_nasal": {
+      "label_id": 8,
+      "region_name": "Puente Nasal",
+      "region_alias": "Puente nasal",
+      "expected_boxes": 1,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 2272,
+            "y": 1542,
+            "w": 283,
+            "h": 343
+          },
+          "score": 20,
+          "ethnicity": "Hombre Blanco",
+          "omitted": false
+        }
+      ]
+    }
+  },
+  "all_slots": [
+    {
+      "label_id": 1,
+      "region_key": "frente",
+      "region_name": "Frente",
+      "region_alias": "Frente",
+      "box_index": 1,
+      "bbox": {
+        "x": 1750,
+        "y": 897,
+        "w": 1247,
+        "h": 454
+      },
+      "score": 30,
+      "ethnicity": "Hombre Blanco",
+      "omitted": false
+    },
+    {
+      "label_id": 2,
+      "region_key": "glabela_entrecejo",
+      "region_name": "Glabela / Entrecejo",
+      "region_alias": "Entrecejo",
+      "box_index": 1,
+      "bbox": {
+        "x": 2235,
+        "y": 1320,
+        "w": 301,
+        "h": 289
+      },
+      "score": 25,
+      "ethnicity": "Hombre Blanco",
+      "omitted": false
+    },
+    {
+      "label_id": 3,
+      "region_key": "patas_de_gallo",
+      "region_name": "Patas de gallo",
+      "region_alias": "Patas de gallo",
+      "box_index": 1,
+      "bbox": {
+        "x": 1677,
+        "y": 1449,
+        "w": 178,
+        "h": 228
+      },
+      "score": 0,
+      "ethnicity": "Hombre Blanco",
+      "omitted": false
+    },
+    {
+      "label_id": 3,
+      "region_key": "patas_de_gallo",
+      "region_name": "Patas de gallo",
+      "region_alias": "Patas de gallo",
+      "box_index": 2,
+      "bbox": null,
+      "score": null,
+      "ethnicity": "Hombre Blanco",
+      "omitted": true
+    },
+    {
+      "label_id": 4,
+      "region_key": "bajo_ojo_ojeras",
+      "region_name": "Bajo ojo / Ojeras",
+      "region_alias": "Ojeras",
+      "box_index": 1,
+      "bbox": {
+        "x": 1849,
+        "y": 1640,
+        "w": 356,
+        "h": 184
+      },
+      "score": 20,
+      "ethnicity": "Hombre Blanco",
+      "omitted": false
+    },
+    {
+      "label_id": 4,
+      "region_key": "bajo_ojo_ojeras",
+      "region_name": "Bajo ojo / Ojeras",
+      "region_alias": "Ojeras",
+      "box_index": 2,
+      "bbox": null,
+      "score": null,
+      "ethnicity": "Hombre Blanco",
+      "omitted": true
+    },
+    {
+      "label_id": 5,
+      "region_key": "surcos_nasogenianos",
+      "region_name": "Surcos Nasogenianos",
+      "region_alias": "Surcos nasogenianos",
+      "box_index": 1,
+      "bbox": {
+        "x": 1935,
+        "y": 1941,
+        "w": 233,
+        "h": 313
+      },
+      "score": 10,
+      "ethnicity": "Hombre Blanco",
+      "omitted": false
+    },
+    {
+      "label_id": 5,
+      "region_key": "surcos_nasogenianos",
+      "region_name": "Surcos Nasogenianos",
+      "region_alias": "Surcos nasogenianos",
+      "box_index": 2,
+      "bbox": null,
+      "score": null,
+      "ethnicity": "Hombre Blanco",
+      "omitted": true
+    },
+    {
+      "label_id": 6,
+      "region_key": "labio_superior",
+      "region_name": "Labio superior",
+      "region_alias": "Labio superior",
+      "box_index": 1,
+      "bbox": {
+        "x": 1990,
+        "y": 2027,
+        "w": 761,
+        "h": 221
+      },
+      "score": 20,
+      "ethnicity": "Hombre Blanco",
+      "omitted": false
+    },
+    {
+      "label_id": 7,
+      "region_key": "comisuras_lineas_marioneta",
+      "region_name": "Comisuras / lineas de marioneta",
+      "region_alias": "Lineas marioneta",
+      "box_index": 1,
+      "bbox": {
+        "x": 1695,
+        "y": 2100,
+        "w": 418,
+        "h": 547
+      },
+      "score": 15,
+      "ethnicity": "Hombre Blanco",
+      "omitted": false
+    },
+    {
+      "label_id": 7,
+      "region_key": "comisuras_lineas_marioneta",
+      "region_name": "Comisuras / lineas de marioneta",
+      "region_alias": "Lineas marioneta",
+      "box_index": 2,
+      "bbox": null,
+      "score": null,
+      "ethnicity": "Hombre Blanco",
+      "omitted": true
+    },
+    {
+      "label_id": 8,
+      "region_key": "puente_nasal",
+      "region_name": "Puente Nasal",
+      "region_alias": "Puente nasal",
+      "box_index": 1,
+      "bbox": {
+        "x": 2272,
+        "y": 1542,
+        "w": 283,
+        "h": 343
+      },
+      "score": 20,
+      "ethnicity": "Hombre Blanco",
+      "omitted": false
+    }
+  ]
+}
