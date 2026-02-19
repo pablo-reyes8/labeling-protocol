@@ -1,19 +1,19 @@
 {
-  "image_id": "cheerful-teenage-girl-smiling-face-portrait.jpg",
+  "image_id": "smiling-businessman-face-portrait-wearing-suit.jpg",
   "image_meta": {
-    "filename": "cheerful-teenage-girl-smiling-face-portrait.jpg",
-    "stem": "cheerful-teenage-girl-smiling-face-portrait",
+    "filename": "smiling-businessman-face-portrait-wearing-suit.jpg",
+    "stem": "smiling-businessman-face-portrait-wearing-suit",
     "extension": ".jpg",
-    "file_size_bytes": 5257074,
-    "width_px": 3612,
-    "height_px": 2889,
-    "modified_at": "2026-02-12T20:16:23Z"
+    "file_size_bytes": 4026364,
+    "width_px": 2916,
+    "height_px": 2332,
+    "modified_at": "2026-02-19T05:14:24Z"
   },
-  "created_at": "2026-02-19T06:01:15Z",
+  "created_at": "2026-02-19T06:25:11Z",
   "global": {
     "label_id": 0,
-    "score": 20,
-    "ethnicity": "Mujer Asiatica"
+    "score": 40,
+    "ethnicity": "Hombre Moreno Americano"
   },
   "regions": {
     "frente": {
@@ -25,13 +25,13 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 1268,
-            "y": 672,
-            "w": 1013,
-            "h": 341
+            "x": 1042,
+            "y": 279,
+            "w": 901,
+            "h": 452
           },
-          "score": 20,
-          "ethnicity": "Mujer Asiatica",
+          "score": 30,
+          "ethnicity": "Hombre Moreno Americano",
           "omitted": false
         }
       ]
@@ -45,13 +45,13 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 1631,
-            "y": 1049,
-            "w": 260,
-            "h": 255
+            "x": 1400,
+            "y": 687,
+            "w": 185,
+            "h": 228
           },
           "score": 15,
-          "ethnicity": "Mujer Asiatica",
+          "ethnicity": "Hombre Moreno Americano",
           "omitted": false
         }
       ]
@@ -65,20 +65,20 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 1120,
-            "y": 1228,
-            "w": 139,
-            "h": 143
+            "x": 883,
+            "y": 861,
+            "w": 170,
+            "h": 232
           },
-          "score": 10,
-          "ethnicity": "Mujer Asiatica",
+          "score": 45,
+          "ethnicity": "Hombre Moreno Americano",
           "omitted": false
         },
         {
           "box_index": 2,
           "bbox": null,
           "score": null,
-          "ethnicity": "Mujer Asiatica",
+          "ethnicity": "Hombre Moreno Americano",
           "omitted": true
         }
       ]
@@ -92,20 +92,20 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 1241,
-            "y": 1313,
-            "w": 372,
-            "h": 179
+            "x": 1046,
+            "y": 1002,
+            "w": 322,
+            "h": 181
           },
-          "score": 10,
-          "ethnicity": "Mujer Asiatica",
+          "score": 35,
+          "ethnicity": "Hombre Moreno Americano",
           "omitted": false
         },
         {
           "box_index": 2,
           "bbox": null,
           "score": null,
-          "ethnicity": "Mujer Asiatica",
+          "ethnicity": "Hombre Moreno Americano",
           "omitted": true
         }
       ]
@@ -119,21 +119,26 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 1255,
-            "y": 1636,
-            "w": 318,
-            "h": 278
+            "x": 1027,
+            "y": 1245,
+            "w": 290,
+            "h": 253
           },
-          "score": 15,
-          "ethnicity": "Mujer Asiatica",
+          "score": 45,
+          "ethnicity": "Hombre Moreno Americano",
           "omitted": false
         },
         {
           "box_index": 2,
-          "bbox": null,
-          "score": null,
-          "ethnicity": "Mujer Asiatica",
-          "omitted": true
+          "bbox": {
+            "x": 1682,
+            "y": 1194,
+            "w": 293,
+            "h": 275
+          },
+          "score": 45,
+          "ethnicity": "Hombre Moreno Americano",
+          "omitted": false
         }
       ]
     },
@@ -146,13 +151,13 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 1488,
-            "y": 1707,
-            "w": 645,
-            "h": 117
+            "x": 1169,
+            "y": 1339,
+            "w": 669,
+            "h": 115
           },
-          "score": 20,
-          "ethnicity": "Mujer Asiatica",
+          "score": 4,
+          "ethnicity": "Hombre Moreno Americano",
           "omitted": false
         }
       ]
@@ -166,21 +171,26 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 1237,
-            "y": 1837,
-            "w": 278,
-            "h": 520
+            "x": 915,
+            "y": 1353,
+            "w": 319,
+            "h": 543
           },
-          "score": 20,
-          "ethnicity": "Mujer Asiatica",
+          "score": 45,
+          "ethnicity": "Hombre Moreno Americano",
           "omitted": false
         },
         {
           "box_index": 2,
-          "bbox": null,
-          "score": null,
-          "ethnicity": "Mujer Asiatica",
-          "omitted": true
+          "bbox": {
+            "x": 1780,
+            "y": 1313,
+            "w": 195,
+            "h": 561
+          },
+          "score": 45,
+          "ethnicity": "Hombre Moreno Americano",
+          "omitted": false
         }
       ]
     },
@@ -193,13 +203,13 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 1672,
-            "y": 1165,
-            "w": 219,
-            "h": 305
+            "x": 1411,
+            "y": 857,
+            "w": 188,
+            "h": 283
           },
           "score": 30,
-          "ethnicity": "Mujer Asiatica",
+          "ethnicity": "Hombre Moreno Americano",
           "omitted": false
         }
       ]
@@ -213,13 +223,13 @@
       "region_alias": "Frente",
       "box_index": 1,
       "bbox": {
-        "x": 1268,
-        "y": 672,
-        "w": 1013,
-        "h": 341
+        "x": 1042,
+        "y": 279,
+        "w": 901,
+        "h": 452
       },
-      "score": 20,
-      "ethnicity": "Mujer Asiatica",
+      "score": 30,
+      "ethnicity": "Hombre Moreno Americano",
       "omitted": false
     },
     {
@@ -229,13 +239,13 @@
       "region_alias": "Entrecejo",
       "box_index": 1,
       "bbox": {
-        "x": 1631,
-        "y": 1049,
-        "w": 260,
-        "h": 255
+        "x": 1400,
+        "y": 687,
+        "w": 185,
+        "h": 228
       },
       "score": 15,
-      "ethnicity": "Mujer Asiatica",
+      "ethnicity": "Hombre Moreno Americano",
       "omitted": false
     },
     {
@@ -245,13 +255,13 @@
       "region_alias": "Patas de gallo",
       "box_index": 1,
       "bbox": {
-        "x": 1120,
-        "y": 1228,
-        "w": 139,
-        "h": 143
+        "x": 883,
+        "y": 861,
+        "w": 170,
+        "h": 232
       },
-      "score": 10,
-      "ethnicity": "Mujer Asiatica",
+      "score": 45,
+      "ethnicity": "Hombre Moreno Americano",
       "omitted": false
     },
     {
@@ -262,7 +272,7 @@
       "box_index": 2,
       "bbox": null,
       "score": null,
-      "ethnicity": "Mujer Asiatica",
+      "ethnicity": "Hombre Moreno Americano",
       "omitted": true
     },
     {
@@ -272,13 +282,13 @@
       "region_alias": "Ojeras",
       "box_index": 1,
       "bbox": {
-        "x": 1241,
-        "y": 1313,
-        "w": 372,
-        "h": 179
+        "x": 1046,
+        "y": 1002,
+        "w": 322,
+        "h": 181
       },
-      "score": 10,
-      "ethnicity": "Mujer Asiatica",
+      "score": 35,
+      "ethnicity": "Hombre Moreno Americano",
       "omitted": false
     },
     {
@@ -289,7 +299,7 @@
       "box_index": 2,
       "bbox": null,
       "score": null,
-      "ethnicity": "Mujer Asiatica",
+      "ethnicity": "Hombre Moreno Americano",
       "omitted": true
     },
     {
@@ -299,13 +309,13 @@
       "region_alias": "Surcos nasogenianos",
       "box_index": 1,
       "bbox": {
-        "x": 1255,
-        "y": 1636,
-        "w": 318,
-        "h": 278
+        "x": 1027,
+        "y": 1245,
+        "w": 290,
+        "h": 253
       },
-      "score": 15,
-      "ethnicity": "Mujer Asiatica",
+      "score": 45,
+      "ethnicity": "Hombre Moreno Americano",
       "omitted": false
     },
     {
@@ -314,10 +324,15 @@
       "region_name": "Surcos Nasogenianos",
       "region_alias": "Surcos nasogenianos",
       "box_index": 2,
-      "bbox": null,
-      "score": null,
-      "ethnicity": "Mujer Asiatica",
-      "omitted": true
+      "bbox": {
+        "x": 1682,
+        "y": 1194,
+        "w": 293,
+        "h": 275
+      },
+      "score": 45,
+      "ethnicity": "Hombre Moreno Americano",
+      "omitted": false
     },
     {
       "label_id": 6,
@@ -326,13 +341,13 @@
       "region_alias": "Labio superior",
       "box_index": 1,
       "bbox": {
-        "x": 1488,
-        "y": 1707,
-        "w": 645,
-        "h": 117
+        "x": 1169,
+        "y": 1339,
+        "w": 669,
+        "h": 115
       },
-      "score": 20,
-      "ethnicity": "Mujer Asiatica",
+      "score": 4,
+      "ethnicity": "Hombre Moreno Americano",
       "omitted": false
     },
     {
@@ -342,13 +357,13 @@
       "region_alias": "Lineas marioneta",
       "box_index": 1,
       "bbox": {
-        "x": 1237,
-        "y": 1837,
-        "w": 278,
-        "h": 520
+        "x": 915,
+        "y": 1353,
+        "w": 319,
+        "h": 543
       },
-      "score": 20,
-      "ethnicity": "Mujer Asiatica",
+      "score": 45,
+      "ethnicity": "Hombre Moreno Americano",
       "omitted": false
     },
     {
@@ -357,10 +372,15 @@
       "region_name": "Comisuras / lineas de marioneta",
       "region_alias": "Lineas marioneta",
       "box_index": 2,
-      "bbox": null,
-      "score": null,
-      "ethnicity": "Mujer Asiatica",
-      "omitted": true
+      "bbox": {
+        "x": 1780,
+        "y": 1313,
+        "w": 195,
+        "h": 561
+      },
+      "score": 45,
+      "ethnicity": "Hombre Moreno Americano",
+      "omitted": false
     },
     {
       "label_id": 8,
@@ -369,13 +389,13 @@
       "region_alias": "Puente nasal",
       "box_index": 1,
       "bbox": {
-        "x": 1672,
-        "y": 1165,
-        "w": 219,
-        "h": 305
+        "x": 1411,
+        "y": 857,
+        "w": 188,
+        "h": 283
       },
       "score": 30,
-      "ethnicity": "Mujer Asiatica",
+      "ethnicity": "Hombre Moreno Americano",
       "omitted": false
     }
   ]

@@ -1,53 +1,88 @@
-# Etiquetado De Imagenes Para Modelo De Envejecimiento
+# Guia Rapida De Etiquetado Facial
 
-Este repositorio es para que varias personas etiqueten fotos con bounding boxes.
-Cada etiquetado se guarda en JSON y se sube a Drive (solo JSON, nunca la imagen).
+Bienvenido/a. Esta guia es para personas que van a **etiquetar imagenes** para apoyar un modelo de Deep Learning de envejecimiento.
 
-## Antes De Empezar
+Solo necesitas abrir el anotador, marcar las cajas y guardar. El sistema genera un JSON y lo sube a Drive.
 
-1. Abre una terminal en esta carpeta.
+## Asi Se Ve Una Anotacion 🖼️
+
+![Ejemplo de anotacion 1](data_boxes/confident-woman-business-owener-wearing-apron-face-portrait_boxes_preview.jpg)
+
+![Ejemplo de anotacion 2](data_boxes/smiling-businessman-face-portrait-wearing-suit_boxes_preview.jpg)
+
+## Inicio En 2 Minutos ⚡
+
+1. Abre terminal en esta carpeta.
 2. Instala dependencias:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Opcion Recomendada (Jupyter)
+3. Abre `annotate_jupyter.ipynb` y ejecuta las celdas.
 
-Archivo: `annotate_jupyter.ipynb`
+## Opcion Recomendada: Jupyter
 
-1. Abre el notebook.
-2. Ejecuta las celdas en orden.
-3. Cambia solo estos valores cuando te lo pida:
-   - Ruta de imagen o carpeta (por ejemplo `data`)
-   - Cantidad de imagenes a etiquetar
-4. Etiqueta y guarda cuando aparezca la ventana.
+En el notebook usa estos chunks.
 
-## Opcion IDE (Script Python)
+### Chunk 1: Cargar modulos
+
+```python
+import importlib
+import sys
+from pathlib import Path
+
+SRC_DIR = Path("src").resolve()
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
+import envegecimiento.external_bbox_annotator as external_bbox_annotator
+import envegecimiento.run_annotation as run_annotation
+
+importlib.reload(external_bbox_annotator)
+importlib.reload(run_annotation)
+```
+
+### Chunk 2: Ejecutar etiquetado
+
+```python
+NUM_IMAGES = 2  # cambia este numero
+
+result = run_annotation.run(
+    "data",          # carpeta con imagenes o ruta de una imagen
+    num_images=NUM_IMAGES,
+)
+result
+```
+
+### Chunk 3 (opcional): Ver preview de un JSON
+
+```python
+from envegecimiento.preview_boxes_from_json import show_boxes_from_json
+
+preview = show_boxes_from_json("results/tu_archivo_annotations.json")
+preview
+```
+
+## Opcion 2: Script En IDE
 
 Archivo: `annotate_ide.py`
 
-1. Abre `annotate_ide.py`.
-2. Cambia:
-   - `IMAGE_PATH` (ejemplo: `r"data"`)
-   - `NUM_IMAGES` (cuantas quieres etiquetar)
+1. Cambia `IMAGE_PATH`.
+2. Cambia `NUM_IMAGES`.
 3. Ejecuta:
 
 ```bash
 python annotate_ide.py
 ```
 
-## Opcion Consola (CLI)
-
-Archivo: `annotate_cli.py`
-
-Ejemplo:
+## Opcion 3: Consola (CLI)
 
 ```bash
 python annotate_cli.py data --count 2
 ```
 
-Si quieres una sola imagen especifica:
+Para una imagen especifica:
 
 ```bash
 python annotate_cli.py "data/mi_imagen.jpg"
@@ -56,14 +91,10 @@ python annotate_cli.py "data/mi_imagen.jpg"
 ## Que Se Guarda
 
 - JSON local en `results/`
-- JSON remoto en Drive con nombre de la imagen
-- Preview de boxes en `data_boxes/`
-
-Ejemplo de preview ya generado:
-
-- `data_boxes/portrait-white-man-isolated_boxes_preview.jpg`
+- JSON remoto en Drive (nombre = nombre de imagen)
+- Preview en `data_boxes/`
 
 ## Si Algo Falla
 
-- Revisa que corriste `pip install -r requirements.txt`.
-- Revisa que estas ejecutando desde la carpeta raiz del proyecto.
+1. Ejecuta de nuevo `pip install -r requirements.txt`.
+2. Verifica que estas en la carpeta raiz del proyecto.

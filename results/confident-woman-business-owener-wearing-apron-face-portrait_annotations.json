@@ -1,19 +1,19 @@
 {
-  "image_id": "portrait-white-man-isolated.jpg",
+  "image_id": "confident-woman-business-owener-wearing-apron-face-portrait.jpg",
   "image_meta": {
-    "filename": "portrait-white-man-isolated.jpg",
-    "stem": "portrait-white-man-isolated",
+    "filename": "confident-woman-business-owener-wearing-apron-face-portrait.jpg",
+    "stem": "confident-woman-business-owener-wearing-apron-face-portrait",
     "extension": ".jpg",
-    "file_size_bytes": 11715442,
-    "width_px": 4950,
-    "height_px": 3852,
-    "modified_at": "2026-02-19T05:12:10Z"
+    "file_size_bytes": 4119629,
+    "width_px": 2501,
+    "height_px": 2001,
+    "modified_at": "2026-02-19T05:12:52Z"
   },
-  "created_at": "2026-02-19T05:52:32Z",
+  "created_at": "2026-02-19T06:24:07Z",
   "global": {
     "label_id": 0,
-    "score": 50,
-    "ethnicity": "Hombre Blanco"
+    "score": 30,
+    "ethnicity": "Mujer Blanca"
   },
   "regions": {
     "frente": {
@@ -25,13 +25,13 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 1750,
-            "y": 897,
-            "w": 1247,
-            "h": 454
+            "x": 925,
+            "y": 422,
+            "w": 614,
+            "h": 230
           },
-          "score": 30,
-          "ethnicity": "Hombre Blanco",
+          "score": 10,
+          "ethnicity": "Mujer Blanca",
           "omitted": false
         }
       ]
@@ -45,13 +45,13 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 2235,
-            "y": 1320,
-            "w": 301,
-            "h": 289
+            "x": 1176,
+            "y": 667,
+            "w": 149,
+            "h": 127
           },
-          "score": 25,
-          "ethnicity": "Hombre Blanco",
+          "score": 15,
+          "ethnicity": "Mujer Blanca",
           "omitted": false
         }
       ]
@@ -65,20 +65,20 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 1677,
-            "y": 1449,
-            "w": 178,
-            "h": 228
+            "x": 841,
+            "y": 726,
+            "w": 112,
+            "h": 127
           },
-          "score": 0,
-          "ethnicity": "Hombre Blanco",
+          "score": 60,
+          "ethnicity": "Mujer Blanca",
           "omitted": false
         },
         {
           "box_index": 2,
           "bbox": null,
           "score": null,
-          "ethnicity": "Hombre Blanco",
+          "ethnicity": "Mujer Blanca",
           "omitted": true
         }
       ]
@@ -92,21 +92,26 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 1849,
-            "y": 1640,
-            "w": 356,
-            "h": 184
+            "x": 946,
+            "y": 819,
+            "w": 208,
+            "h": 109
           },
-          "score": 20,
-          "ethnicity": "Hombre Blanco",
+          "score": 10,
+          "ethnicity": "Mujer Blanca",
           "omitted": false
         },
         {
           "box_index": 2,
-          "bbox": null,
-          "score": null,
-          "ethnicity": "Hombre Blanco",
-          "omitted": true
+          "bbox": {
+            "x": 1353,
+            "y": 828,
+            "w": 208,
+            "h": 115
+          },
+          "score": 10,
+          "ethnicity": "Mujer Blanca",
+          "omitted": false
         }
       ]
     },
@@ -119,20 +124,20 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 1935,
-            "y": 1941,
-            "w": 233,
-            "h": 313
+            "x": 887,
+            "y": 984,
+            "w": 146,
+            "h": 285
           },
-          "score": 10,
-          "ethnicity": "Hombre Blanco",
+          "score": 15,
+          "ethnicity": "Mujer Blanca",
           "omitted": false
         },
         {
           "box_index": 2,
           "bbox": null,
           "score": null,
-          "ethnicity": "Hombre Blanco",
+          "ethnicity": "Mujer Blanca",
           "omitted": true
         }
       ]
@@ -146,13 +151,13 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 1990,
-            "y": 2027,
-            "w": 761,
-            "h": 221
+            "x": 1015,
+            "y": 1039,
+            "w": 484,
+            "h": 87
           },
-          "score": 20,
-          "ethnicity": "Hombre Blanco",
+          "score": 45,
+          "ethnicity": "Mujer Blanca",
           "omitted": false
         }
       ]
@@ -166,20 +171,20 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 1695,
-            "y": 2100,
-            "w": 418,
-            "h": 547
+            "x": 850,
+            "y": 1055,
+            "w": 252,
+            "h": 434
           },
-          "score": 15,
-          "ethnicity": "Hombre Blanco",
+          "score": 25,
+          "ethnicity": "Mujer Blanca",
           "omitted": false
         },
         {
           "box_index": 2,
           "bbox": null,
           "score": null,
-          "ethnicity": "Hombre Blanco",
+          "ethnicity": "Mujer Blanca",
           "omitted": true
         }
       ]
@@ -193,13 +198,13 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 2272,
-            "y": 1542,
-            "w": 283,
-            "h": 343
+            "x": 1195,
+            "y": 720,
+            "w": 133,
+            "h": 202
           },
-          "score": 20,
-          "ethnicity": "Hombre Blanco",
+          "score": 60,
+          "ethnicity": "Mujer Blanca",
           "omitted": false
         }
       ]
@@ -213,13 +218,13 @@
       "region_alias": "Frente",
       "box_index": 1,
       "bbox": {
-        "x": 1750,
-        "y": 897,
-        "w": 1247,
-        "h": 454
+        "x": 925,
+        "y": 422,
+        "w": 614,
+        "h": 230
       },
-      "score": 30,
-      "ethnicity": "Hombre Blanco",
+      "score": 10,
+      "ethnicity": "Mujer Blanca",
       "omitted": false
     },
     {
@@ -229,13 +234,13 @@
       "region_alias": "Entrecejo",
       "box_index": 1,
       "bbox": {
-        "x": 2235,
-        "y": 1320,
-        "w": 301,
-        "h": 289
+        "x": 1176,
+        "y": 667,
+        "w": 149,
+        "h": 127
       },
-      "score": 25,
-      "ethnicity": "Hombre Blanco",
+      "score": 15,
+      "ethnicity": "Mujer Blanca",
       "omitted": false
     },
     {
@@ -245,13 +250,13 @@
       "region_alias": "Patas de gallo",
       "box_index": 1,
       "bbox": {
-        "x": 1677,
-        "y": 1449,
-        "w": 178,
-        "h": 228
+        "x": 841,
+        "y": 726,
+        "w": 112,
+        "h": 127
       },
-      "score": 0,
-      "ethnicity": "Hombre Blanco",
+      "score": 60,
+      "ethnicity": "Mujer Blanca",
       "omitted": false
     },
     {
@@ -262,7 +267,7 @@
       "box_index": 2,
       "bbox": null,
       "score": null,
-      "ethnicity": "Hombre Blanco",
+      "ethnicity": "Mujer Blanca",
       "omitted": true
     },
     {
@@ -272,40 +277,45 @@
       "region_alias": "Ojeras",
       "box_index": 1,
       "bbox": {
-        "x": 1849,
-        "y": 1640,
-        "w": 356,
-        "h": 184
-      },
-      "score": 20,
-      "ethnicity": "Hombre Blanco",
-      "omitted": false
-    },
-    {
-      "label_id": 4,
-      "region_key": "bajo_ojo_ojeras",
-      "region_name": "Bajo ojo / Ojeras",
-      "region_alias": "Ojeras",
-      "box_index": 2,
-      "bbox": null,
-      "score": null,
-      "ethnicity": "Hombre Blanco",
-      "omitted": true
-    },
-    {
-      "label_id": 5,
-      "region_key": "surcos_nasogenianos",
-      "region_name": "Surcos Nasogenianos",
-      "region_alias": "Surcos nasogenianos",
-      "box_index": 1,
-      "bbox": {
-        "x": 1935,
-        "y": 1941,
-        "w": 233,
-        "h": 313
+        "x": 946,
+        "y": 819,
+        "w": 208,
+        "h": 109
       },
       "score": 10,
-      "ethnicity": "Hombre Blanco",
+      "ethnicity": "Mujer Blanca",
+      "omitted": false
+    },
+    {
+      "label_id": 4,
+      "region_key": "bajo_ojo_ojeras",
+      "region_name": "Bajo ojo / Ojeras",
+      "region_alias": "Ojeras",
+      "box_index": 2,
+      "bbox": {
+        "x": 1353,
+        "y": 828,
+        "w": 208,
+        "h": 115
+      },
+      "score": 10,
+      "ethnicity": "Mujer Blanca",
+      "omitted": false
+    },
+    {
+      "label_id": 5,
+      "region_key": "surcos_nasogenianos",
+      "region_name": "Surcos Nasogenianos",
+      "region_alias": "Surcos nasogenianos",
+      "box_index": 1,
+      "bbox": {
+        "x": 887,
+        "y": 984,
+        "w": 146,
+        "h": 285
+      },
+      "score": 15,
+      "ethnicity": "Mujer Blanca",
       "omitted": false
     },
     {
@@ -316,7 +326,7 @@
       "box_index": 2,
       "bbox": null,
       "score": null,
-      "ethnicity": "Hombre Blanco",
+      "ethnicity": "Mujer Blanca",
       "omitted": true
     },
     {
@@ -326,13 +336,13 @@
       "region_alias": "Labio superior",
       "box_index": 1,
       "bbox": {
-        "x": 1990,
-        "y": 2027,
-        "w": 761,
-        "h": 221
+        "x": 1015,
+        "y": 1039,
+        "w": 484,
+        "h": 87
       },
-      "score": 20,
-      "ethnicity": "Hombre Blanco",
+      "score": 45,
+      "ethnicity": "Mujer Blanca",
       "omitted": false
     },
     {
@@ -342,13 +352,13 @@
       "region_alias": "Lineas marioneta",
       "box_index": 1,
       "bbox": {
-        "x": 1695,
-        "y": 2100,
-        "w": 418,
-        "h": 547
+        "x": 850,
+        "y": 1055,
+        "w": 252,
+        "h": 434
       },
-      "score": 15,
-      "ethnicity": "Hombre Blanco",
+      "score": 25,
+      "ethnicity": "Mujer Blanca",
       "omitted": false
     },
     {
@@ -359,7 +369,7 @@
       "box_index": 2,
       "bbox": null,
       "score": null,
-      "ethnicity": "Hombre Blanco",
+      "ethnicity": "Mujer Blanca",
       "omitted": true
     },
     {
@@ -369,13 +379,13 @@
       "region_alias": "Puente nasal",
       "box_index": 1,
       "bbox": {
-        "x": 2272,
-        "y": 1542,
-        "w": 283,
-        "h": 343
+        "x": 1195,
+        "y": 720,
+        "w": 133,
+        "h": 202
       },
-      "score": 20,
-      "ethnicity": "Hombre Blanco",
+      "score": 60,
+      "ethnicity": "Mujer Blanca",
       "omitted": false
     }
   ]
