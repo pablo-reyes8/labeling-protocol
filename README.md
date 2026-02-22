@@ -107,5 +107,5 @@ python annotate_cli.py "data/mi_imagen.jpg"
 
 ## Si Algo Falla
 
-1. Ejecuta de nuevo `pip install -r requirements.txt`.
+1. Ejecuta de nuevo `pip install -r requirements.txt` o verifica que tengas pip actualizado.
 2. Verifica que estas en la carpeta raiz del proyecto.
