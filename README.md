@@ -7,6 +7,12 @@ Cada vez que guardas, la herramienta genera automáticamente un archivo con la i
 
 No necesitas conocimientos técnicos: solo precisión y consistencia al marcar las cajas ✅
 
+## Guia Completa De Etiquetado
+
+Dejamos una guía de etiquetado sumamente completa en `Guia_Protocolo_de_Etiquetado.pdf`.
+
+Ese documento contiene absolutamente todo lo que necesitas saber para realizar el etiquetado correctamente: criterios, instrucciones, ejemplos y consideraciones generales del protocolo.
+
 
 ## Así se ve una anotación 
 
