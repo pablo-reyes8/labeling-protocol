@@ -4,6 +4,7 @@ const API_TOKEN = "x94RbYlGtwNLfOiXWCsQzknrTTqY4jFv";
 const UPSERT_BY_FILENAME = true;
 
 const CLAIMS_FOLDER_NAME = "__claims";
+const ACTIVE_CLAIMS_FOLDER_NAME = "__active_claims";
 const CLAIM_TTL_MINUTES = 240;
 const IMAGE_NAME_REGEX = /\.(jpg|jpeg|png|webp|bmp|tif|tiff)$/i;
 const SOURCE_MANIFEST_FILE_PREFIX = "__source_manifest__";
@@ -180,8 +181,8 @@ function _claimImageIds(folder, candidateImageIds, requestedCount) {
     }
 
     const labeledSet = _buildLabeledSet(folder);
-    const claimsFolder = _getClaimsFolder(folder, true);
-    const activeClaimsSet = _buildActiveClaimsSet(claimsFolder);
+    const activeClaimsFolder = _getClaimsFolder(folder, ACTIVE_CLAIMS_FOLDER_NAME, true);
+    const activeClaimsSet = _buildActiveClaimsSet(activeClaimsFolder);
 
     const available = [];
     for (let i = 0; i < candidates.length; i += 1) {
@@ -196,7 +197,7 @@ function _claimImageIds(folder, candidateImageIds, requestedCount) {
 
     const now = Date.now();
     for (let i = 0; i < picked.length; i += 1) {
-      _upsertClaim(claimsFolder, picked[i], now);
+      _upsertActiveClaim(activeClaimsFolder, picked[i], now);
     }
 
     return picked;
@@ -211,8 +212,12 @@ function _claimRemoteImages(annotationsFolder, sourceImages, requestedCount) {
 
   try {
     const labeledSet = _buildLabeledSet(annotationsFolder);
-    const claimsFolder = _getClaimsFolder(annotationsFolder, true);
-    const activeClaimsSet = _buildActiveClaimsSet(claimsFolder);
+    const activeClaimsFolder = _getClaimsFolder(
+      annotationsFolder,
+      ACTIVE_CLAIMS_FOLDER_NAME,
+      true
+    );
+    const activeClaimsSet = _buildActiveClaimsSet(activeClaimsFolder);
     const sampleResult = _sampleAvailableRemoteImages(
       sourceImages,
       labeledSet,
@@ -223,7 +228,7 @@ function _claimRemoteImages(annotationsFolder, sourceImages, requestedCount) {
 
     const now = Date.now();
     for (let i = 0; i < picked.length; i += 1) {
-      _upsertClaim(claimsFolder, picked[i].image_id, now);
+      _upsertActiveClaim(activeClaimsFolder, picked[i].image_id, now);
     }
 
     return {
@@ -421,7 +426,7 @@ function _buildActiveClaimsSet(claimsFolder) {
   return set;
 }
 
-function _upsertClaim(claimsFolder, imageId, claimedAtMs) {
+function _upsertActiveClaim(claimsFolder, imageId, claimedAtMs) {
   const fileName = _claimFileName(imageId);
   const existing = claimsFolder.getFilesByName(fileName);
   while (existing.hasNext()) {
@@ -532,12 +537,13 @@ function _writeJsonFile(folder, fileName, obj) {
 
   const imageId = _inferImageId(obj, fileName);
   if (imageId) {
-    _clearClaim(folder, imageId);
+    _upsertCompletedClaim(folder, imageId, Date.now());
+    _clearActiveClaim(folder, imageId);
   }
 }
 
-function _clearClaim(folder, imageId) {
-  const claimsFolder = _getClaimsFolder(folder, false);
+function _clearActiveClaim(folder, imageId) {
+  const claimsFolder = _getClaimsFolder(folder, ACTIVE_CLAIMS_FOLDER_NAME, false);
   if (!claimsFolder) {
     return;
   }
@@ -549,16 +555,36 @@ function _clearClaim(folder, imageId) {
   }
 }
 
-function _getClaimsFolder(folder, createIfMissing) {
+function _upsertCompletedClaim(folder, imageId, completedAtMs) {
+  const claimsFolder = _getClaimsFolder(folder, CLAIMS_FOLDER_NAME, true);
+  const fileName = _claimFileName(imageId);
+  const existing = claimsFolder.getFilesByName(fileName);
+  while (existing.hasNext()) {
+    existing.next().setTrashed(true);
+  }
+
+  const payload = {
+    image_id: imageId,
+    completed_at_ms: completedAtMs,
+  };
+  claimsFolder.createFile(fileName, JSON.stringify(payload), MimeType.PLAIN_TEXT);
+}
+
+function _getClaimsFolder(folder, folderName, createIfMissing) {
   const shouldCreate = createIfMissing !== false;
-  const folders = folder.getFoldersByName(CLAIMS_FOLDER_NAME);
+  const targetName = String(folderName || "").trim();
+  if (!targetName) {
+    return null;
+  }
+
+  const folders = folder.getFoldersByName(targetName);
   if (folders.hasNext()) {
     return folders.next();
   }
   if (!shouldCreate) {
     return null;
   }
-  return folder.createFolder(CLAIMS_FOLDER_NAME);
+  return folder.createFolder(targetName);
 }
 
 function _shuffleInPlace(arr) {
