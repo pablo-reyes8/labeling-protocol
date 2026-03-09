@@ -13,8 +13,10 @@ from envegecimiento.run_annotation import run
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Anotador por consola (batch aleatorio; con upload usa reserva remota para evitar duplicados)")
-    parser.add_argument("image", type=str, help="Ruta de imagen o carpeta (ej: data)")
+    parser = argparse.ArgumentParser(
+        description="Anotador por consola (acepta imagen local, carpeta local, 'drive', ID o URL de carpeta de Drive)"
+    )
+    parser.add_argument("image", type=str, help="Ruta local, 'drive', ID o URL de carpeta de Drive")
     parser.add_argument("--output", type=str, default=None, help="Ruta de salida del JSON local")
     parser.add_argument("--reference-dir", type=str, default=None, help="Carpeta de referencias")
     parser.add_argument("--no-upload", action="store_true", help="No subir JSON a Drive")

@@ -1,9 +1,11 @@
 const FOLDER_ID = "13FvCB6Y2Zc4cMY8m213mHRxcDP_jWK8i";
+const SOURCE_IMAGES_FOLDER_ID = "1LN7VNGPRz6kZN5a_VvbOCkbMXG6y7F3u";
 const API_TOKEN = "x94RbYlGtwNLfOiXWCsQzknrTTqY4jFv";
 const UPSERT_BY_FILENAME = true;
 
 const CLAIMS_FOLDER_NAME = "__claims";
 const CLAIM_TTL_MINUTES = 240;
+const IMAGE_NAME_REGEX = /\.(jpg|jpeg|png|webp|bmp|tif|tiff)$/i;
 
 function doPost(e) {
   try {
@@ -15,6 +17,12 @@ function doPost(e) {
     const action = _getParam(e, "action").toLowerCase();
     if (action === "claim") {
       return _handleClaim(e);
+    }
+    if (action === "claim_remote") {
+      return _handleClaimRemote(e);
+    }
+    if (action === "download_image") {
+      return _handleDownloadImage(e);
     }
 
     return _handleSave(e);
@@ -45,6 +53,70 @@ function _handleClaim(e) {
     claimed_count: claimed.length,
     available_count: claimed.length,
     claimed_image_ids: claimed,
+  });
+}
+
+function _handleClaimRemote(e) {
+  if (!e || !e.postData || !e.postData.contents) {
+    return _json({ ok: false, error: "body vacio" });
+  }
+
+  const body = JSON.parse(e.postData.contents);
+  const requestedCount = Number(body.count || 0);
+  const sourceFolderId = String(body.source_folder_id || SOURCE_IMAGES_FOLDER_ID || "").trim();
+
+  if (!requestedCount || requestedCount < 1) {
+    return _json({ ok: false, error: "count invalido" });
+  }
+  if (!sourceFolderId) {
+    return _json({ ok: false, error: "source_folder_id vacio" });
+  }
+
+  const annotationsFolder = DriveApp.getFolderById(FOLDER_ID);
+  const sourceFolder = DriveApp.getFolderById(sourceFolderId);
+  const claimResult = _claimRemoteImages(annotationsFolder, sourceFolder, requestedCount);
+
+  return _json({
+    ok: true,
+    requested_count: requestedCount,
+    claimed_count: claimResult.claimed_images.length,
+    available_count: claimResult.available_count,
+    claimed_images: claimResult.claimed_images,
+  });
+}
+
+function _handleDownloadImage(e) {
+  if (!e || !e.postData || !e.postData.contents) {
+    return _json({ ok: false, error: "body vacio" });
+  }
+
+  const body = JSON.parse(e.postData.contents);
+  const fileId = String(body.file_id || "").trim();
+  const sourceFolderId = String(body.source_folder_id || SOURCE_IMAGES_FOLDER_ID || "").trim();
+
+  if (!fileId) {
+    return _json({ ok: false, error: "file_id vacio" });
+  }
+  if (!sourceFolderId) {
+    return _json({ ok: false, error: "source_folder_id vacio" });
+  }
+
+  const file = DriveApp.getFileById(fileId);
+  if (!_fileBelongsToFolder(file, sourceFolderId)) {
+    return _json({ ok: false, error: "archivo fuera de la carpeta fuente" });
+  }
+
+  const blob = file.getBlob();
+  const bytes = blob.getBytes();
+
+  return _json({
+    ok: true,
+    file_id: file.getId(),
+    image_id: file.getName(),
+    name: file.getName(),
+    mime_type: file.getMimeType(),
+    size_bytes: Number(file.getSize() || 0),
+    base64_data: Utilities.base64Encode(bytes),
   });
 }
 
@@ -110,6 +182,36 @@ function _claimImageIds(folder, candidateImageIds, requestedCount) {
   }
 }
 
+function _claimRemoteImages(annotationsFolder, sourceFolder, requestedCount) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+
+  try {
+    const labeledSet = _buildLabeledSet(annotationsFolder);
+    const claimsFolder = _getClaimsFolder(annotationsFolder, true);
+    const activeClaimsSet = _buildActiveClaimsSet(claimsFolder);
+    const sampleResult = _sampleAvailableRemoteImages(
+      sourceFolder,
+      labeledSet,
+      activeClaimsSet,
+      requestedCount
+    );
+    const picked = sampleResult.sampled_images;
+
+    const now = Date.now();
+    for (let i = 0; i < picked.length; i += 1) {
+      _upsertClaim(claimsFolder, picked[i].image_id, now);
+    }
+
+    return {
+      claimed_images: picked,
+      available_count: sampleResult.available_count,
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function _normalizeCandidateIds(values) {
   const out = [];
   const seen = {};
@@ -123,6 +225,52 @@ function _normalizeCandidateIds(values) {
   }
 
   return out;
+}
+
+function _sampleAvailableRemoteImages(sourceFolder, labeledSet, activeClaimsSet, requestedCount) {
+  const files = sourceFolder.getFiles();
+  const sampled = [];
+  let availableCount = 0;
+
+  while (files.hasNext()) {
+    const file = files.next();
+    if (!_isSupportedImageFile(file)) {
+      continue;
+    }
+
+    const imageId = String(file.getName() || "").trim();
+    if (!imageId) {
+      continue;
+    }
+    if (labeledSet[imageId]) {
+      continue;
+    }
+    if (activeClaimsSet[imageId]) {
+      continue;
+    }
+
+    const imageInfo = {
+      image_id: imageId,
+      file_id: file.getId(),
+      name: imageId,
+    };
+
+    availableCount += 1;
+    if (sampled.length < requestedCount) {
+      sampled.push(imageInfo);
+      continue;
+    }
+
+    const replaceIndex = Math.floor(Math.random() * availableCount);
+    if (replaceIndex < requestedCount) {
+      sampled[replaceIndex] = imageInfo;
+    }
+  }
+
+  return {
+    sampled_images: sampled,
+    available_count: availableCount,
+  };
 }
 
 function _buildLabeledSet(folder) {
@@ -248,6 +396,28 @@ function _inferImageId(payload, fileName) {
 
 function _sanitizeFilename(name) {
   return String(name).replace(/[\\/:*?"<>|]/g, "_").trim();
+}
+
+function _isSupportedImageFile(file) {
+  const name = String(file.getName() || "");
+  return IMAGE_NAME_REGEX.test(name);
+}
+
+function _fileBelongsToFolder(file, folderId) {
+  const parents = file.getParents();
+  const targetId = String(folderId || "").trim();
+  if (!targetId) {
+    return false;
+  }
+
+  while (parents.hasNext()) {
+    const parent = parents.next();
+    if (String(parent.getId() || "") === targetId) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 function _writeJsonFile(folder, fileName, obj) {

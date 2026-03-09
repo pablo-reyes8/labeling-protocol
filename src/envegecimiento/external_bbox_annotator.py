@@ -177,6 +177,7 @@ class ExternalBBoxAnnotator:
 
         self.result: dict[str, Any] = {
             "image_id": self.image_path.name,
+            "image_path": str(self.image_path),
             "image_meta": {
                 "filename": self.image_path.name,
                 "stem": self.image_path.stem,

@@ -11,6 +11,7 @@ if str(SRC_DIR) not in sys.path:
 from envegecimiento import external_bbox_annotator, run_annotation
 
 # Cambia solo esta ruta y ejecuta este archivo en tu IDE.
+# Puede ser una imagen, una carpeta local, "drive", un ID de carpeta o una URL de Google Drive.
 # Si NUM_IMAGES > 1 y upload activo, el lote se asigna aleatoriamente con reserva remota.
 IMAGE_PATH = r"data"
 NUM_IMAGES = 1
