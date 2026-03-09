@@ -6,9 +6,11 @@ import os
 import random
 import re
 import socket
+import threading
 from concurrent.futures import Future, ThreadPoolExecutor
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
@@ -28,6 +30,20 @@ DEFAULT_SOURCE_DRIVE_FOLDER_ID = os.getenv(
 _IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff"}
 _DRIVE_FOLDER_URL_RE = re.compile(r"/folders/([a-zA-Z0-9_-]+)")
 _DRIVE_FOLDER_ID_RE = re.compile(r"^[a-zA-Z0-9_-]{10,}$")
+_DRIVE_SESSION_VERSION = 1
+
+
+def _env_int(name: str, default: int) -> int:
+    raw_value = os.getenv(name, "").strip()
+    if not raw_value:
+        return default
+    try:
+        return int(raw_value)
+    except ValueError:
+        return default
+
+
+_DRIVE_PREFETCH_WINDOW = max(1, min(10, _env_int("ANNOTATION_DRIVE_PREFETCH_WINDOW", 6)))
 
 
 def _project_root() -> Path:
@@ -47,10 +63,152 @@ def _default_output_path(image_path_obj: Path) -> Path:
     return results_dir / f"{image_path_obj.stem}_annotations.json"
 
 
+@dataclass
+class SelectedImageHandle:
+    display_name: str
+    path_supplier: Callable[[], Path]
+
+    def get_path(self) -> Path:
+        return self.path_supplier()
+
+
+@dataclass
+class RemoteDriveSessionState:
+    session_file: Path
+    source_folder_id: str
+    requested_count: int
+    claimed_images: list[dict[str, Any]]
+    next_index: int
+    loaded_from_disk: bool = False
+
+    @property
+    def total_count(self) -> int:
+        return self.requested_count
+
+    @property
+    def claimed_count(self) -> int:
+        return len(self.claimed_images)
+
+
 def _drive_cache_dir(folder_id: str) -> Path:
     cache_dir = _project_root() / ".drive_cache" / folder_id
     cache_dir.mkdir(parents=True, exist_ok=True)
     return cache_dir
+
+
+def _drive_sessions_dir() -> Path:
+    session_dir = _project_root() / ".drive_sessions"
+    session_dir.mkdir(parents=True, exist_ok=True)
+    return session_dir
+
+
+def _drive_session_file(source_folder_id: str, requested_count: int) -> Path:
+    return _drive_sessions_dir() / f"{source_folder_id}_{requested_count}.json"
+
+
+def _write_json_atomic(target_path: Path, payload: dict[str, Any]) -> None:
+    temp_path = target_path.with_suffix(f"{target_path.suffix}.tmp")
+    temp_path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    temp_path.replace(target_path)
+
+
+def _serialize_remote_drive_session_state(session_state: RemoteDriveSessionState) -> dict[str, Any]:
+    return {
+        "version": _DRIVE_SESSION_VERSION,
+        "source_folder_id": session_state.source_folder_id,
+        "requested_count": session_state.requested_count,
+        "next_index": session_state.next_index,
+        "claimed_images": session_state.claimed_images,
+    }
+
+
+def _save_remote_drive_session_state(session_state: RemoteDriveSessionState) -> None:
+    _write_json_atomic(
+        session_state.session_file,
+        _serialize_remote_drive_session_state(session_state),
+    )
+
+
+def _load_remote_drive_session_state(
+    session_file: Path,
+    source_folder_id: str,
+    requested_count: int,
+) -> RemoteDriveSessionState | None:
+    if not session_file.exists():
+        return None
+
+    try:
+        payload = json.loads(session_file.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+
+    claimed_images = payload.get("claimed_images", [])
+    next_index = int(payload.get("next_index", 0) or 0)
+
+    if (
+        int(payload.get("version", 0) or 0) != _DRIVE_SESSION_VERSION
+        or str(payload.get("source_folder_id", "")).strip() != source_folder_id
+        or int(payload.get("requested_count", 0) or 0) != requested_count
+        or not isinstance(claimed_images, list)
+    ):
+        return None
+
+    next_index = max(0, min(next_index, len(claimed_images)))
+    if next_index >= len(claimed_images):
+        try:
+            session_file.unlink()
+        except FileNotFoundError:
+            pass
+        return None
+
+    return RemoteDriveSessionState(
+        session_file=session_file,
+        source_folder_id=source_folder_id,
+        requested_count=requested_count,
+        claimed_images=claimed_images,
+        next_index=next_index,
+        loaded_from_disk=True,
+    )
+
+
+def _claim_remote_drive_session_state(
+    count: int,
+    source_folder_id: str,
+    drive_webapp_url: str | None,
+    drive_api_token: str | None,
+) -> RemoteDriveSessionState:
+    resolved_webapp_url = drive_webapp_url or DEFAULT_DRIVE_WEBAPP_URL
+    resolved_api_token = DEFAULT_DRIVE_API_TOKEN if drive_api_token is None else drive_api_token
+    session_file = _drive_session_file(source_folder_id, count)
+
+    loaded_session = _load_remote_drive_session_state(
+        session_file=session_file,
+        source_folder_id=source_folder_id,
+        requested_count=count,
+    )
+    if loaded_session is not None:
+        return loaded_session
+
+    claimed_images = _claim_remote_images_from_drive_webapp(
+        count=1,
+        source_folder_id=source_folder_id,
+        webapp_url=resolved_webapp_url,
+        api_token=resolved_api_token,
+    )
+
+    session_state = RemoteDriveSessionState(
+        session_file=session_file,
+        source_folder_id=source_folder_id,
+        requested_count=count,
+        claimed_images=claimed_images,
+        next_index=0,
+        loaded_from_disk=False,
+    )
+    _save_remote_drive_session_state(session_state)
+    return session_state
 
 
 def _safe_image_name(raw_name: str, fallback: str) -> str:
@@ -317,33 +475,198 @@ def _download_remote_image_from_drive_webapp(
     return cache_path.resolve()
 
 
-def _select_remote_drive_images(
+class RemoteDrivePrefetchSession:
+    def __init__(
+        self,
+        session_state: RemoteDriveSessionState,
+        webapp_url: str,
+        api_token: str,
+        prefetch_window: int = _DRIVE_PREFETCH_WINDOW,
+    ) -> None:
+        self.session_state = session_state
+        self.webapp_url = webapp_url
+        self.api_token = api_token
+        self.prefetch_window = max(1, prefetch_window)
+        self.state_lock = threading.Lock()
+        self.state_changed = threading.Condition(self.state_lock)
+        self.stop_event = threading.Event()
+        self.downloaded_paths: dict[int, Path] = {}
+        self.prefetch_error: Exception | None = None
+        self.start_index = session_state.next_index
+        self._ensure_slot_ready_sync(self.start_index)
+        self.prefetch_thread = threading.Thread(
+            target=self._prefetch_loop,
+            name="drive-image-prefetch",
+            daemon=True,
+        )
+        self.prefetch_thread.start()
+
+    @property
+    def total_count(self) -> int:
+        return self.session_state.requested_count
+
+    @property
+    def next_index(self) -> int:
+        with self.state_lock:
+            return self.session_state.next_index
+
+    @property
+    def remaining_count(self) -> int:
+        return max(0, self.total_count - self.next_index)
+
+    def current_image_info(self) -> dict[str, Any]:
+        current_index = self.next_index
+        with self.state_lock:
+            if current_index >= self.total_count:
+                raise IndexError("La sesion remota ya no tiene imagenes pendientes.")
+            if current_index >= len(self.session_state.claimed_images):
+                raise RuntimeError("La siguiente imagen remota todavia no fue reclamada.")
+            return self.session_state.claimed_images[current_index]
+
+    def current_display_name(self) -> str:
+        item = self.current_image_info()
+        return _safe_image_name(
+            str(item.get("name", "")).strip() or str(item.get("image_id", "")).strip(),
+            fallback="imagen",
+        )
+
+    def _claim_next_image(self) -> dict[str, Any]:
+        claimed_images = _claim_remote_images_from_drive_webapp(
+            count=1,
+            source_folder_id=self.session_state.source_folder_id,
+            webapp_url=self.webapp_url,
+            api_token=self.api_token,
+        )
+        next_image = claimed_images[0]
+        with self.state_changed:
+            self.session_state.claimed_images.append(next_image)
+            _save_remote_drive_session_state(self.session_state)
+            self.state_changed.notify_all()
+        return next_image
+
+    def _ensure_claimed_image_info(self, index: int) -> dict[str, Any]:
+        if index < 0 or index >= self.total_count:
+            raise IndexError("Indice remoto fuera de rango.")
+
+        while True:
+            with self.state_lock:
+                if index < len(self.session_state.claimed_images):
+                    return self.session_state.claimed_images[index]
+            self._claim_next_image()
+
+    def _download_index(self, index: int) -> Path:
+        with self.state_lock:
+            cached_path = self.downloaded_paths.get(index)
+            if cached_path is not None:
+                return cached_path
+
+        image_info = self._ensure_claimed_image_info(index)
+        downloaded_path = _download_remote_image_from_drive_webapp(
+            image_info=image_info,
+            source_folder_id=self.session_state.source_folder_id,
+            webapp_url=self.webapp_url,
+            api_token=self.api_token,
+        )
+        with self.state_changed:
+            self.downloaded_paths[index] = downloaded_path
+            self.state_changed.notify_all()
+        return downloaded_path
+
+    def _ensure_slot_ready_sync(self, index: int) -> Path:
+        return self._download_index(index)
+
+    def _next_prefetch_index(self) -> int | None:
+        with self.state_lock:
+            current_index = self.session_state.next_index
+            target_end = min(self.total_count, current_index + self.prefetch_window)
+            for index in range(current_index + 1, target_end):
+                if index not in self.downloaded_paths:
+                    return index
+        return None
+
+    def _prefetch_loop(self) -> None:
+        while not self.stop_event.is_set():
+            next_candidate = self._next_prefetch_index()
+            if next_candidate is None:
+                with self.state_changed:
+                    self.state_changed.wait(timeout=0.25)
+                continue
+            try:
+                self._download_index(next_candidate)
+            except Exception as exc:
+                with self.state_changed:
+                    self.prefetch_error = exc
+                    self.state_changed.notify_all()
+                return
+
+    def get_current_path(self) -> Path:
+        current_index = self.next_index
+        with self.state_changed:
+            while True:
+                ready_path = self.downloaded_paths.get(current_index)
+                if ready_path is not None:
+                    return ready_path
+                if self.prefetch_error is not None:
+                    raise RuntimeError(f"Prefetch remoto fallo: {self.prefetch_error}") from self.prefetch_error
+                self.state_changed.wait(timeout=0.25)
+
+    def mark_current_completed(self) -> None:
+        with self.state_changed:
+            completed_index = self.session_state.next_index
+            self.downloaded_paths.pop(completed_index, None)
+            self.session_state.next_index = min(self.total_count, completed_index + 1)
+            is_finished = self.session_state.next_index >= self.total_count
+
+            if not is_finished:
+                _save_remote_drive_session_state(self.session_state)
+            self.state_changed.notify_all()
+
+        if is_finished:
+            try:
+                self.session_state.session_file.unlink()
+            except FileNotFoundError:
+                pass
+
+    def close(self) -> None:
+        self.stop_event.set()
+        with self.state_changed:
+            self.state_changed.notify_all()
+        self.prefetch_thread.join(timeout=1.0)
+
+
+def _start_remote_drive_prefetch_session(
     count: int,
     source_folder_id: str,
     drive_webapp_url: str | None,
     drive_api_token: str | None,
-) -> tuple[list[Path], str]:
+) -> tuple[RemoteDrivePrefetchSession, str]:
     resolved_webapp_url = drive_webapp_url or DEFAULT_DRIVE_WEBAPP_URL
     resolved_api_token = DEFAULT_DRIVE_API_TOKEN if drive_api_token is None else drive_api_token
-
-    claimed_images = _claim_remote_images_from_drive_webapp(
+    session_state = _claim_remote_drive_session_state(
         count=count,
         source_folder_id=source_folder_id,
-        webapp_url=resolved_webapp_url,
-        api_token=resolved_api_token,
+        drive_webapp_url=drive_webapp_url,
+        drive_api_token=drive_api_token,
     )
-
-    downloaded_paths = [
-        _download_remote_image_from_drive_webapp(
-            image_info=item,
-            source_folder_id=source_folder_id,
+    selection_mode = "drive_remote_resume" if session_state.loaded_from_disk else "drive_remote_session"
+    return (
+        RemoteDrivePrefetchSession(
+            session_state=session_state,
             webapp_url=resolved_webapp_url,
             api_token=resolved_api_token,
-        )
-        for item in claimed_images
-    ]
+        ),
+        selection_mode,
+    )
 
-    return downloaded_paths, "drive_remote"
+
+def _build_local_image_handles(selected_images: list[Path]) -> list[SelectedImageHandle]:
+    return [
+        SelectedImageHandle(
+            display_name=image_path.name,
+            path_supplier=lambda image_path=image_path: image_path,
+        )
+        for image_path in selected_images
+    ]
 
 
 def _pick_random_local_images(candidate_images: list[Path], count: int) -> list[Path]:
@@ -431,8 +754,8 @@ def _annotate_one_image(
     return result
 
 
-def _annotate_selected_images(
-    selected_images: list[Path],
+def _annotate_remote_drive_session(
+    remote_session: RemoteDrivePrefetchSession,
     selection_mode: str,
     output_json_path: str | None,
     reference_dir: str | None,
@@ -441,18 +764,168 @@ def _annotate_selected_images(
     drive_api_token: str | None,
     fail_on_upload_error: bool,
 ) -> dict[str, Any]:
+    pending_count = remote_session.remaining_count
+    if pending_count < 1:
+        return {
+            "mode": "batch",
+            "selection": selection_mode,
+            "total_requested": 0,
+            "total_completed": 0,
+            "items": [],
+        }
+
+    resumed_from = remote_session.start_index
+    if pending_count == 1 and remote_session.total_count == 1:
+        try:
+            chosen_path = remote_session.get_current_path()
+            print(f"Seleccion ({selection_mode}): {remote_session.current_display_name()}")
+            result = _annotate_one_image(
+                image_path_obj=chosen_path,
+                output_json_path=output_json_path,
+                reference_dir=reference_dir,
+                upload_to_drive=upload_to_drive,
+                drive_webapp_url=drive_webapp_url,
+                drive_api_token=drive_api_token,
+                fail_on_upload_error=fail_on_upload_error,
+            )
+            remote_session.mark_current_completed()
+            result["_session_total"] = remote_session.total_count
+            result["_session_resumed_from_index"] = resumed_from + 1
+            return result
+        finally:
+            remote_session.close()
+
+    print(
+        f"Sesion batch ({selection_mode}): {pending_count} pendiente(s) "
+        f"de {remote_session.total_count} total."
+    )
+
+    batch_results: list[dict[str, Any]] = []
+    shared_root: Any | None = None
+
+    upload_jobs: list[tuple[int, str, Future[dict]]] = []
+    upload_executor: ThreadPoolExecutor | None = None
+    resolved_webapp_url = drive_webapp_url or DEFAULT_DRIVE_WEBAPP_URL
+    resolved_api_token = DEFAULT_DRIVE_API_TOKEN if drive_api_token is None else drive_api_token
+
+    if upload_to_drive:
+        upload_executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="json-upload")
+
+    try:
+        import tkinter as tk
+
+        shared_root = tk.Tk()
+        shared_root.withdraw()
+
+        while remote_session.remaining_count > 0:
+            batch_index = len(batch_results) + 1
+            current_path = remote_session.get_current_path()
+            current_display_name = remote_session.current_display_name()
+            print(f"[{batch_index}/{pending_count}] Anotando: {current_display_name}")
+
+            current_result = _annotate_one_image(
+                image_path_obj=current_path,
+                output_json_path=None,
+                reference_dir=reference_dir,
+                upload_to_drive=False,
+                drive_webapp_url=drive_webapp_url,
+                drive_api_token=drive_api_token,
+                fail_on_upload_error=fail_on_upload_error,
+                shared_root=shared_root,
+            )
+            current_result["_batch_index"] = batch_index
+            current_result["_batch_total"] = pending_count
+            current_result["_session_total"] = remote_session.total_count
+            current_result["_session_resumed_from_index"] = resumed_from + 1
+
+            if upload_to_drive and upload_executor is not None:
+                image_id = str(current_result.get("image_id", "")).strip() or current_path.name
+                remote_filename = _build_remote_json_name(image_id)
+                payload_for_upload = json.loads(json.dumps(current_result, ensure_ascii=False))
+                future = upload_executor.submit(
+                    _upload_json_to_drive_webapp,
+                    payload_for_upload,
+                    resolved_webapp_url,
+                    resolved_api_token,
+                    remote_filename,
+                )
+                upload_jobs.append((len(batch_results), remote_filename, future))
+                current_result["_upload"] = {
+                    "ok": None,
+                    "pending": True,
+                    "remote_filename": remote_filename,
+                }
+
+            batch_results.append(current_result)
+            remote_session.mark_current_completed()
+    finally:
+        if shared_root is not None:
+            try:
+                if shared_root.winfo_exists():
+                    shared_root.destroy()
+            except Exception:
+                pass
+        remote_session.close()
+
+    upload_errors: list[str] = []
+    if upload_executor is not None:
+        upload_executor.shutdown(wait=True)
+        for item_index, remote_filename, future in upload_jobs:
+            item = batch_results[item_index]
+            try:
+                info = future.result()
+                item["_upload"] = {"ok": True, **info}
+            except Exception as exc:
+                item["_upload"] = {
+                    "ok": False,
+                    "error": str(exc),
+                    "remote_filename": remote_filename,
+                }
+                upload_errors.append(f"{remote_filename}: {exc}")
+
+    if upload_errors and fail_on_upload_error:
+        summary = " | ".join(upload_errors[:3])
+        raise RuntimeError(f"Fallaron subidas remotas en batch: {summary}")
+
+    return {
+        "mode": "batch",
+        "selection": selection_mode,
+        "total_requested": pending_count,
+        "total_completed": len(batch_results),
+        "session_total": remote_session.total_count,
+        "session_resumed_from_index": resumed_from + 1,
+        "items": batch_results,
+    }
+
+
+def _annotate_selected_images(
+    selected_images: list[SelectedImageHandle],
+    selection_mode: str,
+    output_json_path: str | None,
+    reference_dir: str | None,
+    upload_to_drive: bool,
+    drive_webapp_url: str | None,
+    drive_api_token: str | None,
+    fail_on_upload_error: bool,
+    selection_executor: ThreadPoolExecutor | None = None,
+) -> dict[str, Any]:
     if len(selected_images) == 1:
-        chosen = selected_images[0]
-        print(f"Seleccion ({selection_mode}): {chosen.name}")
-        return _annotate_one_image(
-            image_path_obj=chosen,
-            output_json_path=output_json_path,
-            reference_dir=reference_dir,
-            upload_to_drive=upload_to_drive,
-            drive_webapp_url=drive_webapp_url,
-            drive_api_token=drive_api_token,
-            fail_on_upload_error=fail_on_upload_error,
-        )
+        try:
+            chosen = selected_images[0]
+            chosen_path = chosen.get_path()
+            print(f"Seleccion ({selection_mode}): {chosen.display_name}")
+            return _annotate_one_image(
+                image_path_obj=chosen_path,
+                output_json_path=output_json_path,
+                reference_dir=reference_dir,
+                upload_to_drive=upload_to_drive,
+                drive_webapp_url=drive_webapp_url,
+                drive_api_token=drive_api_token,
+                fail_on_upload_error=fail_on_upload_error,
+            )
+        finally:
+            if selection_executor is not None:
+                selection_executor.shutdown(wait=False, cancel_futures=False)
 
     print(f"Seleccion batch ({selection_mode}): {len(selected_images)} imagen(es)")
 
@@ -474,9 +947,10 @@ def _annotate_selected_images(
         shared_root.withdraw()
 
         for index, current_image in enumerate(selected_images, start=1):
-            print(f"[{index}/{len(selected_images)}] Anotando: {current_image.name}")
+            current_image_path = current_image.get_path()
+            print(f"[{index}/{len(selected_images)}] Anotando: {current_image.display_name}")
             current_result = _annotate_one_image(
-                image_path_obj=current_image,
+                image_path_obj=current_image_path,
                 output_json_path=None,
                 reference_dir=reference_dir,
                 upload_to_drive=False,
@@ -489,7 +963,7 @@ def _annotate_selected_images(
             current_result["_batch_total"] = len(selected_images)
 
             if upload_to_drive and upload_executor is not None:
-                image_id = str(current_result.get("image_id", "")).strip() or current_image.name
+                image_id = str(current_result.get("image_id", "")).strip() or current_image_path.name
                 remote_filename = _build_remote_json_name(image_id)
 
                 payload_for_upload = json.loads(json.dumps(current_result, ensure_ascii=False))
@@ -515,6 +989,8 @@ def _annotate_selected_images(
                     shared_root.destroy()
             except Exception:
                 pass
+        if selection_executor is not None:
+            selection_executor.shutdown(wait=False, cancel_futures=False)
 
     upload_errors: list[str] = []
     if upload_executor is not None:
@@ -573,14 +1049,14 @@ def run(
         if output_json_path is not None and num_images > 1:
             raise ValueError("`output_json_path` solo aplica cuando `num_images=1`.")
 
-        selected_images, selection_mode = _select_remote_drive_images(
+        remote_session, selection_mode = _start_remote_drive_prefetch_session(
             count=num_images,
             source_folder_id=remote_drive_folder_id,
             drive_webapp_url=drive_webapp_url,
             drive_api_token=drive_api_token,
         )
-        return _annotate_selected_images(
-            selected_images=selected_images,
+        return _annotate_remote_drive_session(
+            remote_session=remote_session,
             selection_mode=selection_mode,
             output_json_path=output_json_path,
             reference_dir=reference_dir,
@@ -626,7 +1102,7 @@ def run(
             fail_on_upload_error=fail_on_upload_error,
         )
         return _annotate_selected_images(
-            selected_images=selected_images,
+            selected_images=_build_local_image_handles(selected_images),
             selection_mode=selection_mode,
             output_json_path=output_json_path,
             reference_dir=reference_dir,
@@ -645,7 +1121,7 @@ def run(
         fail_on_upload_error=fail_on_upload_error,
     )
     return _annotate_selected_images(
-        selected_images=selected_images,
+        selected_images=_build_local_image_handles(selected_images),
         selection_mode=selection_mode,
         output_json_path=output_json_path,
         reference_dir=reference_dir,

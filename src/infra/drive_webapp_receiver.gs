@@ -6,6 +6,8 @@ const UPSERT_BY_FILENAME = true;
 const CLAIMS_FOLDER_NAME = "__claims";
 const CLAIM_TTL_MINUTES = 240;
 const IMAGE_NAME_REGEX = /\.(jpg|jpeg|png|webp|bmp|tif|tiff)$/i;
+const SOURCE_MANIFEST_FILE_PREFIX = "__source_manifest__";
+const SOURCE_MANIFEST_TTL_MINUTES = 720;
 
 function doPost(e) {
   try {
@@ -29,6 +31,24 @@ function doPost(e) {
   } catch (err) {
     return _text("ERROR: " + err);
   }
+}
+
+function buildSourceManifestNow() {
+  const sourceFolderId = String(SOURCE_IMAGES_FOLDER_ID || "").trim();
+  if (!sourceFolderId) {
+    throw new Error("SOURCE_IMAGES_FOLDER_ID vacio");
+  }
+
+  const annotationsFolder = DriveApp.getFolderById(FOLDER_ID);
+  const sourceFolder = DriveApp.getFolderById(sourceFolderId);
+  const images = _buildSourceManifestEntries(sourceFolder);
+  _writeSourceManifest(annotationsFolder, sourceFolderId, images, Date.now());
+
+  return {
+    ok: true,
+    source_folder_id: sourceFolderId,
+    image_count: images.length,
+  };
 }
 
 function _handleClaim(e) {
@@ -74,7 +94,8 @@ function _handleClaimRemote(e) {
 
   const annotationsFolder = DriveApp.getFolderById(FOLDER_ID);
   const sourceFolder = DriveApp.getFolderById(sourceFolderId);
-  const claimResult = _claimRemoteImages(annotationsFolder, sourceFolder, requestedCount);
+  const sourceManifest = _getSourceManifestEntries(annotationsFolder, sourceFolder, sourceFolderId);
+  const claimResult = _claimRemoteImages(annotationsFolder, sourceManifest, requestedCount);
 
   return _json({
     ok: true,
@@ -182,7 +203,7 @@ function _claimImageIds(folder, candidateImageIds, requestedCount) {
   }
 }
 
-function _claimRemoteImages(annotationsFolder, sourceFolder, requestedCount) {
+function _claimRemoteImages(annotationsFolder, sourceImages, requestedCount) {
   const lock = LockService.getScriptLock();
   lock.waitLock(30000);
 
@@ -191,7 +212,7 @@ function _claimRemoteImages(annotationsFolder, sourceFolder, requestedCount) {
     const claimsFolder = _getClaimsFolder(annotationsFolder, true);
     const activeClaimsSet = _buildActiveClaimsSet(claimsFolder);
     const sampleResult = _sampleAvailableRemoteImages(
-      sourceFolder,
+      sourceImages,
       labeledSet,
       activeClaimsSet,
       requestedCount
@@ -227,18 +248,13 @@ function _normalizeCandidateIds(values) {
   return out;
 }
 
-function _sampleAvailableRemoteImages(sourceFolder, labeledSet, activeClaimsSet, requestedCount) {
-  const files = sourceFolder.getFiles();
+function _sampleAvailableRemoteImages(sourceImages, labeledSet, activeClaimsSet, requestedCount) {
   const sampled = [];
   let availableCount = 0;
 
-  while (files.hasNext()) {
-    const file = files.next();
-    if (!_isSupportedImageFile(file)) {
-      continue;
-    }
-
-    const imageId = String(file.getName() || "").trim();
+  for (let i = 0; i < sourceImages.length; i += 1) {
+    const imageInfo = sourceImages[i];
+    const imageId = String(imageInfo.image_id || "").trim();
     if (!imageId) {
       continue;
     }
@@ -248,12 +264,6 @@ function _sampleAvailableRemoteImages(sourceFolder, labeledSet, activeClaimsSet,
     if (activeClaimsSet[imageId]) {
       continue;
     }
-
-    const imageInfo = {
-      image_id: imageId,
-      file_id: file.getId(),
-      name: imageId,
-    };
 
     availableCount += 1;
     if (sampled.length < requestedCount) {
@@ -271,6 +281,89 @@ function _sampleAvailableRemoteImages(sourceFolder, labeledSet, activeClaimsSet,
     sampled_images: sampled,
     available_count: availableCount,
   };
+}
+
+function _getSourceManifestEntries(annotationsFolder, sourceFolder, sourceFolderId) {
+  const manifestFile = _getSourceManifestFile(annotationsFolder, sourceFolderId);
+  const nowMs = Date.now();
+  const ttlMs = SOURCE_MANIFEST_TTL_MINUTES * 60 * 1000;
+
+  if (manifestFile) {
+    try {
+      const payload = JSON.parse(String(manifestFile.getBlob().getDataAsString() || ""));
+      const manifestFolderId = String(payload.source_folder_id || "").trim();
+      const generatedAtMs = Number(payload.generated_at_ms || 0);
+      const images = Array.isArray(payload.images) ? payload.images : [];
+      if (
+        manifestFolderId === sourceFolderId &&
+        generatedAtMs > 0 &&
+        nowMs - generatedAtMs <= ttlMs &&
+        images.length > 0
+      ) {
+        return images;
+      }
+    } catch (_err) {
+      // Rebuild below.
+    }
+  }
+
+  const rebuiltImages = _buildSourceManifestEntries(sourceFolder);
+  _writeSourceManifest(annotationsFolder, sourceFolderId, rebuiltImages, nowMs);
+  return rebuiltImages;
+}
+
+function _buildSourceManifestEntries(sourceFolder) {
+  const files = sourceFolder.getFiles();
+  const images = [];
+
+  while (files.hasNext()) {
+    const file = files.next();
+    if (!_isSupportedImageFile(file)) {
+      continue;
+    }
+
+    const imageId = String(file.getName() || "").trim();
+    if (!imageId) {
+      continue;
+    }
+
+    images.push({
+      image_id: imageId,
+      file_id: file.getId(),
+      name: imageId,
+    });
+  }
+
+  return images;
+}
+
+function _writeSourceManifest(annotationsFolder, sourceFolderId, images, generatedAtMs) {
+  const manifestName = _sourceManifestFileName(sourceFolderId);
+  const existing = annotationsFolder.getFilesByName(manifestName);
+  while (existing.hasNext()) {
+    existing.next().setTrashed(true);
+  }
+
+  const payload = {
+    source_folder_id: sourceFolderId,
+    generated_at_ms: generatedAtMs,
+    image_count: images.length,
+    images: images,
+  };
+  annotationsFolder.createFile(manifestName, JSON.stringify(payload), MimeType.PLAIN_TEXT);
+}
+
+function _getSourceManifestFile(annotationsFolder, sourceFolderId) {
+  const manifestName = _sourceManifestFileName(sourceFolderId);
+  const files = annotationsFolder.getFilesByName(manifestName);
+  if (files.hasNext()) {
+    return files.next();
+  }
+  return null;
+}
+
+function _sourceManifestFileName(sourceFolderId) {
+  return SOURCE_MANIFEST_FILE_PREFIX + sourceFolderId + ".json";
 }
 
 function _buildLabeledSet(folder) {
