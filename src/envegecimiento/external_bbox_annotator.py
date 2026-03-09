@@ -144,13 +144,18 @@ class ExternalBBoxAnnotator:
         self.target_original_image = target_original
         image_stat = self.image_path.stat()
 
+        # Reserve vertical space for header, instructions and controls so the
+        # full image fits onscreen without looking cropped inside the window.
+        global_reserved_h = 320
+        region_reserved_h = 360
+
         global_max_w = int(self.screen_w * 0.78)
-        global_max_h = int(self.screen_h * 0.78)
+        global_max_h = max(320, self.screen_h - global_reserved_h)
         self.target_global_image, _ = _resize_for_bounds(target_original, global_max_w, global_max_h)
         self.target_global_photo = ImageTk.PhotoImage(self.target_global_image)
 
         panel_max_w = int(self.screen_w * 0.42)
-        panel_max_h = int(self.screen_h * 0.72)
+        panel_max_h = max(300, self.screen_h - region_reserved_h)
         self.target_panel_image, self.target_panel_scale = _resize_for_bounds(target_original, panel_max_w, panel_max_h)
         self.target_panel_photo = ImageTk.PhotoImage(self.target_panel_image)
         self.target_panel_w, self.target_panel_h = self.target_panel_image.size
@@ -196,6 +201,38 @@ class ExternalBBoxAnnotator:
             resized, _scale = _resize_for_bounds(ref_image, panel_max_w, panel_max_h)
             self.reference_photo_cache[label_id] = ImageTk.PhotoImage(resized)
 
+    def _build_instruction_card(self, parent: tk.Frame, column: int, title: str, body: str) -> None:
+        card = tk.Frame(
+            parent,
+            bg="#ffffff",
+            highlightthickness=1,
+            highlightbackground="#cbd5e1",
+            padx=10,
+            pady=6,
+        )
+        card.grid(row=0, column=column, sticky="nsew", padx=(0 if column == 0 else 6, 0))
+
+        tk.Label(
+            card,
+            text=title,
+            anchor="w",
+            justify="left",
+            font=("Arial", 9, "bold"),
+            fg="#0f172a",
+            bg="#ffffff",
+        ).pack(fill="x")
+
+        tk.Label(
+            card,
+            text=body,
+            anchor="w",
+            justify="left",
+            wraplength=180,
+            font=("Arial", 8),
+            fg="#475569",
+            bg="#ffffff",
+        ).pack(fill="x", pady=(4, 0))
+
     def _build_ui(self) -> None:
         self.root.title("Aging Box Annotator - Local")
         self.root.configure(bg="#f3f4f6")
@@ -204,7 +241,7 @@ class ExternalBBoxAnnotator:
         wrapper.pack(fill="both", expand=True, padx=10, pady=10)
 
         header = tk.Frame(wrapper, bg="#0f172a", bd=0)
-        header.pack(fill="x", pady=(0, 8))
+        header.pack(fill="x", pady=(0, 6))
 
         self.step_var = tk.StringVar(value="Paso 0/8 | Global")
         step_label = tk.Label(
@@ -216,9 +253,22 @@ class ExternalBBoxAnnotator:
             fg="white",
             bg="#0f172a",
             padx=12,
-            pady=8,
+            pady=6,
         )
         step_label.pack(fill="x")
+
+        status_caption = tk.Label(
+            header,
+            text="Que hacer ahora",
+            anchor="w",
+            justify="left",
+            font=("Arial", 8, "bold"),
+            fg="#93c5fd",
+            bg="#0f172a",
+            padx=12,
+            pady=0,
+        )
+        status_caption.pack(fill="x", pady=(0, 2))
 
         self.status_var = tk.StringVar(value="Cargando interfaz...")
         status_label = tk.Label(
@@ -226,30 +276,43 @@ class ExternalBBoxAnnotator:
             textvariable=self.status_var,
             anchor="w",
             justify="left",
-            font=("Arial", 11),
+            font=("Arial", 10),
             fg="#dbeafe",
             bg="#0f172a",
             padx=12,
             pady=0,
         )
-        status_label.pack(fill="x", pady=(0, 10))
+        status_label.pack(fill="x", pady=(0, 8))
 
-        help_text = (
-            "Dibujo: click y arrastra en la imagen derecha | Enter: cerrar region | "
-            "Backspace/Delete: deshacer ultima caja | Q: omitir zona como Missing | "
-            "Z: activar/desactivar zoom (activo por defecto) | "
-            "En score: Rehacer caja o cerrar ventana"
+        help_panel = tk.Frame(wrapper, bg="#f3f4f6")
+        help_panel.pack(fill="x", pady=(0, 6))
+        for column in range(4):
+            help_panel.grid_columnconfigure(column, weight=1)
+
+        self._build_instruction_card(
+            help_panel,
+            0,
+            "1. Dibuja la zona",
+            "Click y arrastra en la foto derecha.",
         )
-        self.help_label = tk.Label(
-            wrapper,
-            text=help_text,
-            anchor="w",
-            justify="left",
-            font=("Arial", 10),
-            fg="#111827",
-            bg="#f3f4f6",
+        self._build_instruction_card(
+            help_panel,
+            1,
+            "2. Guarda y sigue",
+            "Enter o boton 'Guardar zona y seguir'.",
         )
-        self.help_label.pack(fill="x", pady=(0, 8))
+        self._build_instruction_card(
+            help_panel,
+            2,
+            "3. Si no se puede ver",
+            "Usa Q si esta tapada o corrupta.",
+        )
+        self._build_instruction_card(
+            help_panel,
+            3,
+            "Atajos utiles",
+            "Backspace deshace. Z cambia el zoom.",
+        )
 
         self.panes_row = tk.Frame(wrapper, bg="#f3f4f6")
         self.panes_row.pack(fill="both", expand=True)
@@ -299,10 +362,10 @@ class ExternalBBoxAnnotator:
 
         controls = tk.Frame(wrapper, bg="#f3f4f6")
         controls.pack(fill="x", pady=(10, 0))
-        tk.Button(controls, text="Cerrar region (Enter)", command=self.complete_region).pack(side="left")
-        tk.Button(controls, text="Deshacer (Backspace)", command=self.undo_last_box).pack(side="left", padx=8)
-        tk.Button(controls, text="Omitir zona (Q)", command=self.omit_current_region).pack(side="left")
-        tk.Button(controls, text="Cancelar", command=self.on_close).pack(side="right")
+        tk.Button(controls, text="Guardar zona y seguir (Enter)", command=self.complete_region).pack(side="left")
+        tk.Button(controls, text="Deshacer ultima caja", command=self.undo_last_box).pack(side="left", padx=8)
+        tk.Button(controls, text="Omitir esta zona (Q)", command=self.omit_current_region).pack(side="left")
+        tk.Button(controls, text="Cancelar anotacion", command=self.on_close).pack(side="right")
 
         self._try_maximize()
         self._show_global_layout()
@@ -362,7 +425,10 @@ class ExternalBBoxAnnotator:
         self.right_canvas.image = self.target_global_photo
 
         self._set_step("Paso 0/8 | Datos globales")
-        self._set_status("Primero ingresa etnicidad (solo texto) y score global (0-100).")
+        self._set_status(
+            "Completa primero los datos generales.\n"
+            "Ingresa sexo y etnicidad, y luego el score global entre 0 y 100."
+        )
 
     def _show_region_layout(self) -> None:
         self.left_frame.pack_forget()
@@ -732,11 +798,9 @@ class ExternalBBoxAnnotator:
         self.right_title_var.set(f"Imagen a anotar | {self.current_region.ui_name}")
         self._set_step(f"Paso {self.current_region_index + 1}/8 | {self.current_region.ui_name}")
         self._set_status(
-            f"Region actual: {self.current_region.ui_name}. "
-            f"Maximo {self.current_region.max_boxes} caja(s). "
-            "Dibuja en la imagen derecha y presiona Enter para continuar, o Q para marcar Missing. "
-            f"Zoom al calificar: {'ACTIVO' if self.zoom_preview_requested else 'DESACTIVADO'} "
-            "(Z para cambiar)."
+            f"Dibuja la zona de {self.current_region.ui_name} en la imagen derecha.\n"
+            "Cuando termines esta zona, usa 'Guardar zona y seguir' o presiona Enter.\n"
+            f"Zoom al calificar: {'activado' if self.zoom_preview_requested else 'desactivado'}."
         )
         self.right_canvas.focus_set()
 
@@ -771,7 +835,7 @@ class ExternalBBoxAnnotator:
         if len(self.current_boxes) >= self.current_region.max_boxes:
             self._set_status(
                 f"{self.current_region.ui_name}: maximo de {self.current_region.max_boxes} cajas alcanzado. "
-                "Presiona Enter para cerrar region."
+                "Ahora guarda esta zona con Enter o con el boton de continuar."
             )
             return
 
@@ -846,12 +910,12 @@ class ExternalBBoxAnnotator:
         if len(self.current_boxes) >= self.current_region.max_boxes:
             self._set_status(
                 f"{self.current_region.ui_name}: ya tienes {len(self.current_boxes)} caja(s). "
-                "Presiona Enter para cerrar region."
+                "Ahora guarda esta zona con Enter o con el boton de continuar."
             )
         else:
             self._set_status(
                 f"{self.current_region.ui_name}: caja {len(self.current_boxes)} guardada. "
-                "Dibuja otra o Enter para cerrar."
+                "Si necesitas otra caja, dibujala ahora. Si ya terminaste, guarda y sigue."
             )
 
     def _to_original_bbox(self, x0: int, y0: int, x1: int, y1: int) -> dict[str, int]:
@@ -891,12 +955,12 @@ class ExternalBBoxAnnotator:
                 "Region sin marcar",
                 (
                     f"{self.current_region.ui_name} no tiene cajas.\n\n"
-                    "Si la zona esta tapada, corrupta o no se puede evaluar, usa 'Omitir zona (Q)'."
+                    "Si la zona esta tapada, corrupta o no se puede evaluar, usa 'Omitir esta zona (Q)'."
                 ),
                 parent=self.root,
             )
             self._set_status(
-                f"{self.current_region.ui_name}: dibuja al menos una caja o usa Omitir zona (Q)."
+                f"{self.current_region.ui_name}: dibuja al menos una caja o usa 'Omitir esta zona (Q)'."
             )
             self.right_canvas.focus_set()
             return
@@ -915,7 +979,7 @@ class ExternalBBoxAnnotator:
             self._remove_boxes_from_index(box_index - 1)
             self._set_status(
                 f"{self.current_region.ui_name}: vuelve a dibujar desde caja {box_index}. "
-                "Luego presiona Enter para calificar otra vez."
+                "Cuando termines, guarda esta zona otra vez."
             )
             self.right_canvas.focus_set()
             return
@@ -937,7 +1001,8 @@ class ExternalBBoxAnnotator:
         confirm = self._confirm_omit_region(self.current_region, len(self.current_boxes))
         if not confirm:
             self._set_status(
-                f"{self.current_region.ui_name}: continuas en modo etiquetado. Dibuja la caja y presiona Enter."
+                f"{self.current_region.ui_name}: continuas etiquetando esta zona. "
+                "Dibuja la caja y luego guarda para seguir."
             )
             self.right_canvas.focus_set()
             return
