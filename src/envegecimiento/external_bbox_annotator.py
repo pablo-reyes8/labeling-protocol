@@ -33,6 +33,9 @@ REGION_SPECS: list[RegionSpec] = [
     RegionSpec(8, "puente_nasal", "Puente Nasal", "Puente nasal", 1),
 ]
 
+ANNOTATED_SLOT_STATUS = "Annotated"
+MISSING_SLOT_STATUS = "Missing"
+
 
 class RedoBoxSelection(Exception):
     def __init__(self, box_index: int) -> None:
@@ -83,6 +86,24 @@ def _iso_utc_from_timestamp(ts: float) -> str:
 
 def _project_root() -> Path:
     return Path(__file__).resolve().parents[2]
+
+
+def _build_slot_payload(
+    *,
+    box_index: int,
+    bbox: dict[str, int] | None,
+    score: int | None,
+    ethnicity: str,
+    omitted: bool,
+) -> dict[str, Any]:
+    return {
+        "box_index": box_index,
+        "bbox": bbox,
+        "score": score,
+        "ethnicity": ethnicity,
+        "omitted": omitted,
+        "slot_status": MISSING_SLOT_STATUS if omitted else ANNOTATED_SLOT_STATUS,
+    }
 
 
 class ExternalBBoxAnnotator:
@@ -215,7 +236,8 @@ class ExternalBBoxAnnotator:
 
         help_text = (
             "Dibujo: click y arrastra en la imagen derecha | Enter: cerrar region | "
-            "Backspace/Delete: deshacer ultima caja | Z: activar/desactivar zoom (activo por defecto) | "
+            "Backspace/Delete: deshacer ultima caja | Q: omitir zona como Missing | "
+            "Z: activar/desactivar zoom (activo por defecto) | "
             "En score: Rehacer caja o cerrar ventana"
         )
         self.help_label = tk.Label(
@@ -279,6 +301,7 @@ class ExternalBBoxAnnotator:
         controls.pack(fill="x", pady=(10, 0))
         tk.Button(controls, text="Cerrar region (Enter)", command=self.complete_region).pack(side="left")
         tk.Button(controls, text="Deshacer (Backspace)", command=self.undo_last_box).pack(side="left", padx=8)
+        tk.Button(controls, text="Omitir zona (Q)", command=self.omit_current_region).pack(side="left")
         tk.Button(controls, text="Cancelar", command=self.on_close).pack(side="right")
 
         self._try_maximize()
@@ -300,6 +323,8 @@ class ExternalBBoxAnnotator:
         self.root.bind("<Return>", lambda _: self.complete_region())
         self.root.bind("<BackSpace>", lambda _: self.undo_last_box())
         self.root.bind("<Delete>", lambda _: self.undo_last_box())
+        self.root.bind("<q>", lambda _: self.omit_current_region())
+        self.root.bind("<Q>", lambda _: self.omit_current_region())
         self.root.bind("<z>", lambda _: self.toggle_zoom_for_scoring())
         self.root.bind("<Z>", lambda _: self.toggle_zoom_for_scoring())
         self.root.bind("<Escape>", lambda _: self.on_close())
@@ -517,6 +542,84 @@ class ExternalBBoxAnnotator:
     def _confirm_retry(self, message: str) -> bool:
         return messagebox.askyesno("Valor requerido", message, parent=self.root)
 
+    def _confirm_omit_region(self, region: RegionSpec, current_box_count: int) -> bool:
+        result = {"omit": False}
+
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Confirmar omision")
+        dialog.resizable(False, False)
+        dialog.transient(self.root)
+        dialog.grab_set()
+        dialog.configure(bg="#fff7ed")
+
+        container = tk.Frame(dialog, padx=16, pady=14, bg="#fff7ed")
+        container.pack(fill="both", expand=True)
+
+        tk.Label(
+            container,
+            text="Warning",
+            anchor="w",
+            justify="left",
+            font=("Arial", 11, "bold"),
+            fg="#9a3412",
+            bg="#fff7ed",
+        ).pack(fill="x", pady=(0, 6))
+
+        warning_message = f"Vas a omitir la zona '{region.ui_name}'."
+        if current_box_count > 0:
+            warning_message += (
+                f"\n\nYa dibujaste {current_box_count} caja(s). "
+                "Si confirmas, esas cajas se descartaran y la zona quedara como Missing."
+            )
+        else:
+            warning_message += "\n\nLa zona quedara guardada como Missing."
+
+        tk.Label(
+            container,
+            text=warning_message,
+            anchor="w",
+            justify="left",
+            font=("Arial", 10),
+            fg="#111827",
+            bg="#fff7ed",
+        ).pack(fill="x")
+
+        tk.Label(
+            container,
+            text="Presiona Enter para confirmar o usa el boton para volver a etiquetar.",
+            anchor="w",
+            justify="left",
+            font=("Arial", 9),
+            fg="#7c2d12",
+            bg="#fff7ed",
+        ).pack(fill="x", pady=(10, 0))
+
+        buttons = tk.Frame(container, bg="#fff7ed")
+        buttons.pack(fill="x", pady=(12, 0))
+
+        def on_confirm() -> None:
+            result["omit"] = True
+            self._remember_prompt_position(dialog)
+            dialog.destroy()
+
+        def on_back() -> None:
+            result["omit"] = False
+            self._remember_prompt_position(dialog)
+            dialog.destroy()
+
+        confirm_button = tk.Button(buttons, text="Confirmar omision", width=16, command=on_confirm)
+        confirm_button.pack(side="left")
+        tk.Button(buttons, text="Volver a etiquetar", width=16, command=on_back).pack(side="left", padx=8)
+
+        dialog.protocol("WM_DELETE_WINDOW", on_back)
+        dialog.bind("<Return>", lambda _: on_confirm())
+        dialog.bind("<Escape>", lambda _: on_back())
+
+        self._place_prompt_window(dialog)
+        confirm_button.focus_set()
+        dialog.wait_window()
+        return bool(result["omit"])
+
     def _ask_ethnicity(self) -> str:
         while True:
             raw = self._prompt_value(
@@ -631,7 +734,7 @@ class ExternalBBoxAnnotator:
         self._set_status(
             f"Region actual: {self.current_region.ui_name}. "
             f"Maximo {self.current_region.max_boxes} caja(s). "
-            "Dibuja en la imagen derecha y presiona Enter para continuar. "
+            "Dibuja en la imagen derecha y presiona Enter para continuar, o Q para marcar Missing. "
             f"Zoom al calificar: {'ACTIVO' if self.zoom_preview_requested else 'DESACTIVADO'} "
             "(Z para cambiar)."
         )
@@ -783,6 +886,21 @@ class ExternalBBoxAnnotator:
         if self.current_region is None:
             return
 
+        if not self.current_boxes:
+            messagebox.showwarning(
+                "Region sin marcar",
+                (
+                    f"{self.current_region.ui_name} no tiene cajas.\n\n"
+                    "Si la zona esta tapada, corrupta o no se puede evaluar, usa 'Omitir zona (Q)'."
+                ),
+                parent=self.root,
+            )
+            self._set_status(
+                f"{self.current_region.ui_name}: dibuja al menos una caja o usa Omitir zona (Q)."
+            )
+            self.right_canvas.focus_set()
+            return
+
         ethnicity = str(self.result["global"]["ethnicity"])
 
         try:
@@ -806,29 +924,64 @@ class ExternalBBoxAnnotator:
             self.root.destroy()
             return
 
-        region_payload = {
-            "label_id": self.current_region.label_id,
-            "region_name": self.current_region.canonical_name,
-            "region_alias": self.current_region.ui_name,
-            "expected_boxes": self.current_region.max_boxes,
-            "slots": slots,
-        }
-        self.result["regions"][self.current_region.key] = region_payload
-
-        for slot in slots:
-            self.result["all_slots"].append(
-                {
-                    "label_id": self.current_region.label_id,
-                    "region_key": self.current_region.key,
-                    "region_name": self.current_region.canonical_name,
-                    "region_alias": self.current_region.ui_name,
-                    **slot,
-                }
-            )
+        self._store_region_payload(self.current_region, slots)
 
         self.current_boxes = []
         self._clear_annotation_overlays()
         self._start_next_region()
+
+    def omit_current_region(self) -> None:
+        if self.current_region is None:
+            return
+
+        confirm = self._confirm_omit_region(self.current_region, len(self.current_boxes))
+        if not confirm:
+            self._set_status(
+                f"{self.current_region.ui_name}: continuas en modo etiquetado. Dibuja la caja y presiona Enter."
+            )
+            self.right_canvas.focus_set()
+            return
+
+        ethnicity = str(self.result["global"]["ethnicity"])
+        slots = self._build_missing_region_slots(self.current_region, ethnicity=ethnicity)
+        self._store_region_payload(self.current_region, slots)
+
+        self.current_boxes = []
+        self._clear_annotation_overlays()
+        self._start_next_region()
+
+    def _store_region_payload(self, region: RegionSpec, slots: list[dict[str, Any]]) -> None:
+        region_payload = {
+            "label_id": region.label_id,
+            "region_name": region.canonical_name,
+            "region_alias": region.ui_name,
+            "expected_boxes": region.max_boxes,
+            "slots": slots,
+        }
+        self.result["regions"][region.key] = region_payload
+
+        for slot in slots:
+            self.result["all_slots"].append(
+                {
+                    "label_id": region.label_id,
+                    "region_key": region.key,
+                    "region_name": region.canonical_name,
+                    "region_alias": region.ui_name,
+                    **slot,
+                }
+            )
+
+    def _build_missing_region_slots(self, region: RegionSpec, ethnicity: str) -> list[dict[str, Any]]:
+        return [
+            _build_slot_payload(
+                box_index=box_index,
+                bbox=None,
+                score=None,
+                ethnicity=ethnicity,
+                omitted=True,
+            )
+            for box_index in range(1, region.max_boxes + 1)
+        ]
 
     def _remove_boxes_from_index(self, index0: int) -> None:
         start = max(0, index0)
@@ -962,17 +1115,6 @@ class ExternalBBoxAnnotator:
         region_title = region.ui_name
 
         if region.max_boxes == 1:
-            if not boxes:
-                return [
-                    {
-                        "box_index": 1,
-                        "bbox": None,
-                        "score": None,
-                        "ethnicity": ethnicity,
-                        "omitted": True,
-                    }
-                ]
-
             score = self._ask_score_with_optional_zoom(
                 region_title=region_title,
                 prompt=f"Score para {region_title} (caja 1, 0-100):",
@@ -981,31 +1123,13 @@ class ExternalBBoxAnnotator:
                 show_zoom=show_zoom,
             )
             return [
-                {
-                    "box_index": 1,
-                    "bbox": boxes[0],
-                    "score": score,
-                    "ethnicity": ethnicity,
-                    "omitted": False,
-                }
-            ]
-
-        if len(boxes) == 0:
-            return [
-                {
-                    "box_index": 1,
-                    "bbox": None,
-                    "score": None,
-                    "ethnicity": ethnicity,
-                    "omitted": True,
-                },
-                {
-                    "box_index": 2,
-                    "bbox": None,
-                    "score": None,
-                    "ethnicity": ethnicity,
-                    "omitted": True,
-                },
+                _build_slot_payload(
+                    box_index=1,
+                    bbox=boxes[0],
+                    score=score,
+                    ethnicity=ethnicity,
+                    omitted=False,
+                )
             ]
 
         if len(boxes) == 1:
@@ -1017,20 +1141,20 @@ class ExternalBBoxAnnotator:
                 show_zoom=show_zoom,
             )
             return [
-                {
-                    "box_index": 1,
-                    "bbox": boxes[0],
-                    "score": score,
-                    "ethnicity": ethnicity,
-                    "omitted": False,
-                },
-                {
-                    "box_index": 2,
-                    "bbox": None,
-                    "score": None,
-                    "ethnicity": ethnicity,
-                    "omitted": True,
-                },
+                _build_slot_payload(
+                    box_index=1,
+                    bbox=boxes[0],
+                    score=score,
+                    ethnicity=ethnicity,
+                    omitted=False,
+                ),
+                _build_slot_payload(
+                    box_index=2,
+                    bbox=None,
+                    score=None,
+                    ethnicity=ethnicity,
+                    omitted=True,
+                ),
             ]
 
         score_1 = self._ask_score_with_optional_zoom(
@@ -1048,20 +1172,20 @@ class ExternalBBoxAnnotator:
             show_zoom=show_zoom,
         )
         return [
-            {
-                "box_index": 1,
-                "bbox": boxes[0],
-                "score": score_1,
-                "ethnicity": ethnicity,
-                "omitted": False,
-            },
-            {
-                "box_index": 2,
-                "bbox": boxes[1],
-                "score": score_2,
-                "ethnicity": ethnicity,
-                "omitted": False,
-            },
+            _build_slot_payload(
+                box_index=1,
+                bbox=boxes[0],
+                score=score_1,
+                ethnicity=ethnicity,
+                omitted=False,
+            ),
+            _build_slot_payload(
+                box_index=2,
+                bbox=boxes[1],
+                score=score_2,
+                ethnicity=ethnicity,
+                omitted=False,
+            ),
         ]
 
     def _finish(self) -> None:
