@@ -1,0 +1,417 @@
+{
+  "image_id": "04205.png",
+  "image_path": "C:\\Users\\alejo\\OneDrive\\Escritorio\\Pablo\\Profesional\\Semillero\\protocolo de etiquetado\\data\\04205.png",
+  "image_meta": {
+    "filename": "04205.png",
+    "stem": "04205",
+    "extension": ".png",
+    "file_size_bytes": 1525938,
+    "width_px": 1024,
+    "height_px": 1024,
+    "modified_at": "2026-03-06T23:52:57Z"
+  },
+  "created_at": "2026-03-09T05:01:15Z",
+  "global": {
+    "label_id": 0,
+    "score": 20,
+    "ethnicity": "Mujer"
+  },
+  "regions": {
+    "frente": {
+      "label_id": 1,
+      "region_name": "Frente",
+      "region_alias": "Frente",
+      "expected_boxes": 1,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 311,
+            "y": 181,
+            "w": 463,
+            "h": 204
+          },
+          "score": 60,
+          "ethnicity": "Mujer",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    },
+    "glabela_entrecejo": {
+      "label_id": 2,
+      "region_name": "Glabela / Entrecejo",
+      "region_alias": "Entrecejo",
+      "expected_boxes": 1,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 434,
+            "y": 341,
+            "w": 116,
+            "h": 150
+          },
+          "score": 30,
+          "ethnicity": "Mujer",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    },
+    "patas_de_gallo": {
+      "label_id": 3,
+      "region_name": "Patas de gallo",
+      "region_alias": "Patas de gallo",
+      "expected_boxes": 2,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 259,
+            "y": 448,
+            "w": 72,
+            "h": 81
+          },
+          "score": 50,
+          "ethnicity": "Mujer",
+          "omitted": false,
+          "slot_status": "Annotated"
+        },
+        {
+          "box_index": 2,
+          "bbox": {
+            "x": 715,
+            "y": 447,
+            "w": 143,
+            "h": 163
+          },
+          "score": 40,
+          "ethnicity": "Mujer",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    },
+    "bajo_ojo_ojeras": {
+      "label_id": 4,
+      "region_name": "Bajo ojo / Ojeras",
+      "region_alias": "Ojeras",
+      "expected_boxes": 2,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 304,
+            "y": 499,
+            "w": 147,
+            "h": 93
+          },
+          "score": 20,
+          "ethnicity": "Mujer",
+          "omitted": false,
+          "slot_status": "Annotated"
+        },
+        {
+          "box_index": 2,
+          "bbox": {
+            "x": 563,
+            "y": 506,
+            "w": 158,
+            "h": 97
+          },
+          "score": 40,
+          "ethnicity": "Mujer",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    },
+    "surcos_nasogenianos": {
+      "label_id": 5,
+      "region_name": "Surcos Nasogenianos",
+      "region_alias": "Surcos nasogenianos",
+      "expected_boxes": 2,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 257,
+            "y": 600,
+            "w": 134,
+            "h": 175
+          },
+          "score": 50,
+          "ethnicity": "Mujer",
+          "omitted": false,
+          "slot_status": "Annotated"
+        },
+        {
+          "box_index": 2,
+          "bbox": {
+            "x": 597,
+            "y": 617,
+            "w": 187,
+            "h": 175
+          },
+          "score": 10,
+          "ethnicity": "Mujer",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    },
+    "labio_superior": {
+      "label_id": 6,
+      "region_name": "Labio superior",
+      "region_alias": "Labio superior",
+      "expected_boxes": 1,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": null,
+          "score": null,
+          "ethnicity": "Mujer",
+          "omitted": true,
+          "slot_status": "Missing"
+        }
+      ]
+    },
+    "comisuras_lineas_marioneta": {
+      "label_id": 7,
+      "region_name": "Comisuras / lineas de marioneta",
+      "region_alias": "Lineas marioneta",
+      "expected_boxes": 2,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": null,
+          "score": null,
+          "ethnicity": "Mujer",
+          "omitted": true,
+          "slot_status": "Missing"
+        },
+        {
+          "box_index": 2,
+          "bbox": null,
+          "score": null,
+          "ethnicity": "Mujer",
+          "omitted": true,
+          "slot_status": "Missing"
+        }
+      ]
+    },
+    "puente_nasal": {
+      "label_id": 8,
+      "region_name": "Puente Nasal",
+      "region_alias": "Puente nasal",
+      "expected_boxes": 1,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 449,
+            "y": 495,
+            "w": 104,
+            "h": 136
+          },
+          "score": 50,
+          "ethnicity": "Mujer",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    }
+  },
+  "all_slots": [
+    {
+      "label_id": 1,
+      "region_key": "frente",
+      "region_name": "Frente",
+      "region_alias": "Frente",
+      "box_index": 1,
+      "bbox": {
+        "x": 311,
+        "y": 181,
+        "w": 463,
+        "h": 204
+      },
+      "score": 60,
+      "ethnicity": "Mujer",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 2,
+      "region_key": "glabela_entrecejo",
+      "region_name": "Glabela / Entrecejo",
+      "region_alias": "Entrecejo",
+      "box_index": 1,
+      "bbox": {
+        "x": 434,
+        "y": 341,
+        "w": 116,
+        "h": 150
+      },
+      "score": 30,
+      "ethnicity": "Mujer",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 3,
+      "region_key": "patas_de_gallo",
+      "region_name": "Patas de gallo",
+      "region_alias": "Patas de gallo",
+      "box_index": 1,
+      "bbox": {
+        "x": 259,
+        "y": 448,
+        "w": 72,
+        "h": 81
+      },
+      "score": 50,
+      "ethnicity": "Mujer",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 3,
+      "region_key": "patas_de_gallo",
+      "region_name": "Patas de gallo",
+      "region_alias": "Patas de gallo",
+      "box_index": 2,
+      "bbox": {
+        "x": 715,
+        "y": 447,
+        "w": 143,
+        "h": 163
+      },
+      "score": 40,
+      "ethnicity": "Mujer",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 4,
+      "region_key": "bajo_ojo_ojeras",
+      "region_name": "Bajo ojo / Ojeras",
+      "region_alias": "Ojeras",
+      "box_index": 1,
+      "bbox": {
+        "x": 304,
+        "y": 499,
+        "w": 147,
+        "h": 93
+      },
+      "score": 20,
+      "ethnicity": "Mujer",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 4,
+      "region_key": "bajo_ojo_ojeras",
+      "region_name": "Bajo ojo / Ojeras",
+      "region_alias": "Ojeras",
+      "box_index": 2,
+      "bbox": {
+        "x": 563,
+        "y": 506,
+        "w": 158,
+        "h": 97
+      },
+      "score": 40,
+      "ethnicity": "Mujer",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 5,
+      "region_key": "surcos_nasogenianos",
+      "region_name": "Surcos Nasogenianos",
+      "region_alias": "Surcos nasogenianos",
+      "box_index": 1,
+      "bbox": {
+        "x": 257,
+        "y": 600,
+        "w": 134,
+        "h": 175
+      },
+      "score": 50,
+      "ethnicity": "Mujer",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 5,
+      "region_key": "surcos_nasogenianos",
+      "region_name": "Surcos Nasogenianos",
+      "region_alias": "Surcos nasogenianos",
+      "box_index": 2,
+      "bbox": {
+        "x": 597,
+        "y": 617,
+        "w": 187,
+        "h": 175
+      },
+      "score": 10,
+      "ethnicity": "Mujer",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 6,
+      "region_key": "labio_superior",
+      "region_name": "Labio superior",
+      "region_alias": "Labio superior",
+      "box_index": 1,
+      "bbox": null,
+      "score": null,
+      "ethnicity": "Mujer",
+      "omitted": true,
+      "slot_status": "Missing"
+    },
+    {
+      "label_id": 7,
+      "region_key": "comisuras_lineas_marioneta",
+      "region_name": "Comisuras / lineas de marioneta",
+      "region_alias": "Lineas marioneta",
+      "box_index": 1,
+      "bbox": null,
+      "score": null,
+      "ethnicity": "Mujer",
+      "omitted": true,
+      "slot_status": "Missing"
+    },
+    {
+      "label_id": 7,
+      "region_key": "comisuras_lineas_marioneta",
+      "region_name": "Comisuras / lineas de marioneta",
+      "region_alias": "Lineas marioneta",
+      "box_index": 2,
+      "bbox": null,
+      "score": null,
+      "ethnicity": "Mujer",
+      "omitted": true,
+      "slot_status": "Missing"
+    },
+    {
+      "label_id": 8,
+      "region_key": "puente_nasal",
+      "region_name": "Puente Nasal",
+      "region_alias": "Puente nasal",
+      "box_index": 1,
+      "bbox": {
+        "x": 449,
+        "y": 495,
+        "w": 104,
+        "h": 136
+      },
+      "score": 50,
+      "ethnicity": "Mujer",
+      "omitted": false,
+      "slot_status": "Annotated"
+    }
+  ]
+}

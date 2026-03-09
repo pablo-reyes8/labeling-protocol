@@ -7,12 +7,13 @@ import random
 import re
 import socket
 import threading
+import time
 from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlencode
+from urllib.parse import quote, urlencode
 from urllib.request import Request, urlopen
 
 # Reemplaza este valor por la URL /exec de tu deployment de Apps Script.
@@ -31,6 +32,11 @@ _IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff"}
 _DRIVE_FOLDER_URL_RE = re.compile(r"/folders/([a-zA-Z0-9_-]+)")
 _DRIVE_FOLDER_ID_RE = re.compile(r"^[a-zA-Z0-9_-]{10,}$")
 _DRIVE_SESSION_VERSION = 1
+_DRIVE_DOWNLOAD_MODE = os.getenv("ANNOTATION_DRIVE_DOWNLOAD_MODE", "auto").strip().lower() or "auto"
+_DRIVE_SERVICE_ACCOUNT_FILE = os.getenv("ANNOTATION_DRIVE_SERVICE_ACCOUNT_FILE", "").strip()
+_DRIVE_DIRECT_DOWNLOAD_TIMEOUT_SECONDS = 30.0
+_DRIVE_TOKEN_LOCK = threading.Lock()
+_DRIVE_TOKEN_CACHE: dict[str, Any] = {"token": None, "expires_at": 0.0, "source": None}
 
 
 def _env_int(name: str, default: int) -> int:
@@ -113,6 +119,58 @@ def _write_json_atomic(target_path: Path, payload: dict[str, Any]) -> None:
         encoding="utf-8",
     )
     temp_path.replace(target_path)
+
+
+def _service_account_credentials_path() -> Path | None:
+    if not _DRIVE_SERVICE_ACCOUNT_FILE:
+        return None
+    credentials_path = Path(_DRIVE_SERVICE_ACCOUNT_FILE).expanduser().resolve()
+    if not credentials_path.exists():
+        raise FileNotFoundError(
+            f"No existe ANNOTATION_DRIVE_SERVICE_ACCOUNT_FILE: {credentials_path}"
+        )
+    return credentials_path
+
+
+def _get_service_account_access_token() -> str | None:
+    credentials_path = _service_account_credentials_path()
+    if credentials_path is None:
+        return None
+
+    now = time.time()
+    with _DRIVE_TOKEN_LOCK:
+        cached_token = str(_DRIVE_TOKEN_CACHE.get("token") or "").strip()
+        cached_expiry = float(_DRIVE_TOKEN_CACHE.get("expires_at") or 0.0)
+        cached_source = str(_DRIVE_TOKEN_CACHE.get("source") or "")
+        if cached_token and cached_expiry - now > 60 and cached_source == str(credentials_path):
+            return cached_token
+
+    try:
+        from google.auth.transport.requests import Request as GoogleAuthRequest
+        from google.oauth2 import service_account
+    except ImportError as exc:
+        raise RuntimeError(
+            "Para descargar imagenes directo desde Drive con service account, instala `google-auth` "
+            "y configura `ANNOTATION_DRIVE_SERVICE_ACCOUNT_FILE`."
+        ) from exc
+
+    credentials = service_account.Credentials.from_service_account_file(
+        str(credentials_path),
+        scopes=["https://www.googleapis.com/auth/drive.readonly"],
+    )
+    credentials.refresh(GoogleAuthRequest())
+    access_token = str(credentials.token or "").strip()
+    if not access_token:
+        raise RuntimeError("No pude obtener access token del service account de Google Drive.")
+
+    expiry = getattr(credentials, "expiry", None)
+    expires_at = float(expiry.timestamp()) if expiry is not None else now + 3000.0
+
+    with _DRIVE_TOKEN_LOCK:
+        _DRIVE_TOKEN_CACHE["token"] = access_token
+        _DRIVE_TOKEN_CACHE["expires_at"] = expires_at
+        _DRIVE_TOKEN_CACHE["source"] = str(credentials_path)
+    return access_token
 
 
 def _serialize_remote_drive_session_state(session_state: RemoteDriveSessionState) -> dict[str, Any]:
@@ -475,6 +533,133 @@ def _download_remote_image_from_drive_webapp(
     return cache_path.resolve()
 
 
+def _write_response_to_cache(response: Any, cache_path: Path, expected_size: int) -> Path:
+    temp_path = cache_path.with_suffix(f"{cache_path.suffix}.tmp")
+    bytes_written = 0
+
+    try:
+        with temp_path.open("wb") as output_handle:
+            while True:
+                chunk = response.read(1024 * 128)
+                if not chunk:
+                    break
+                output_handle.write(chunk)
+                bytes_written += len(chunk)
+
+        if bytes_written <= 0:
+            raise RuntimeError("Drive devolvio una descarga vacia.")
+        if expected_size > 0 and bytes_written != expected_size:
+            raise RuntimeError(
+                f"Drive devolvio {bytes_written} bytes y esperaba {expected_size}."
+            )
+
+        temp_path.replace(cache_path)
+        return cache_path.resolve()
+    except Exception:
+        try:
+            temp_path.unlink()
+        except FileNotFoundError:
+            pass
+        raise
+
+
+def _download_remote_image_from_drive_direct(
+    image_info: dict[str, Any],
+    source_folder_id: str,
+    timeout_seconds: float = _DRIVE_DIRECT_DOWNLOAD_TIMEOUT_SECONDS,
+) -> Path:
+    file_id = str(image_info.get("file_id", "")).strip()
+    if not file_id:
+        raise RuntimeError(f"Claim remoto invalido: falta file_id. Payload: {image_info}")
+
+    image_name = _safe_image_name(
+        str(image_info.get("name", "")).strip() or str(image_info.get("image_id", "")).strip(),
+        fallback=f"{file_id}.bin",
+    )
+    cache_path = _drive_cache_dir(source_folder_id) / image_name
+    expected_size = int(image_info.get("size_bytes", 0) or 0)
+    resource_key = str(image_info.get("resource_key", "") or "").strip()
+
+    if cache_path.exists() and (expected_size <= 0 or cache_path.stat().st_size == expected_size):
+        return cache_path.resolve()
+
+    attempt_errors: list[str] = []
+    download_mode = _DRIVE_DOWNLOAD_MODE
+
+    if download_mode in {"auto", "service_account"}:
+        try:
+            access_token = _get_service_account_access_token()
+            if access_token:
+                headers = {"Authorization": f"Bearer {access_token}"}
+                if resource_key:
+                    headers["X-Goog-Drive-Resource-Keys"] = f"{file_id}/{resource_key}"
+                request = Request(
+                    url=(
+                        "https://www.googleapis.com/drive/v3/files/"
+                        f"{quote(file_id)}?alt=media&supportsAllDrives=true"
+                    ),
+                    headers=headers,
+                    method="GET",
+                )
+                with urlopen(request, timeout=timeout_seconds) as response:
+                    return _write_response_to_cache(response, cache_path, expected_size)
+        except Exception as exc:
+            attempt_errors.append(f"service_account={exc}")
+            if download_mode == "service_account":
+                raise RuntimeError(
+                    "Descarga directa desde Drive fallo usando service account: "
+                    + " | ".join(attempt_errors)
+                ) from exc
+
+    if download_mode in {"auto", "public"}:
+        params = {"export": "download", "id": file_id}
+        if resource_key:
+            params["resourcekey"] = resource_key
+        request = Request(
+            url=f"https://drive.google.com/uc?{urlencode(params)}",
+            headers={"User-Agent": "Mozilla/5.0"},
+            method="GET",
+        )
+        try:
+            with urlopen(request, timeout=timeout_seconds) as response:
+                content_type = str(response.headers.get("Content-Type", "") or "").lower()
+                content_disposition = str(response.headers.get("Content-Disposition", "") or "").lower()
+                if "text/html" in content_type and "attachment" not in content_disposition:
+                    preview = response.read(256).decode("utf-8", errors="replace")
+                    raise RuntimeError(f"Drive devolvio HTML en vez de binario: {preview[:120]!r}")
+                return _write_response_to_cache(response, cache_path, expected_size)
+        except Exception as exc:
+            attempt_errors.append(f"public={exc}")
+            if download_mode == "public":
+                raise RuntimeError(
+                    "Descarga publica directa desde Drive fallo: " + " | ".join(attempt_errors)
+                ) from exc
+
+    if attempt_errors:
+        raise RuntimeError(" | ".join(attempt_errors))
+    raise RuntimeError("No hay estrategia de descarga directa disponible para Drive.")
+
+
+def _download_remote_image(
+    image_info: dict[str, Any],
+    source_folder_id: str,
+    webapp_url: str,
+    api_token: str,
+) -> Path:
+    try:
+        return _download_remote_image_from_drive_direct(
+            image_info=image_info,
+            source_folder_id=source_folder_id,
+        )
+    except Exception:
+        return _download_remote_image_from_drive_webapp(
+            image_info=image_info,
+            source_folder_id=source_folder_id,
+            webapp_url=webapp_url,
+            api_token=api_token,
+        )
+
+
 class RemoteDrivePrefetchSession:
     def __init__(
         self,
@@ -561,7 +746,7 @@ class RemoteDrivePrefetchSession:
                 return cached_path
 
         image_info = self._ensure_claimed_image_info(index)
-        downloaded_path = _download_remote_image_from_drive_webapp(
+        downloaded_path = _download_remote_image(
             image_info=image_info,
             source_folder_id=self.session_state.source_folder_id,
             webapp_url=self.webapp_url,
@@ -1096,7 +1281,7 @@ def run(
         selected_images, selection_mode = _select_random_images(
             candidate_images=candidate_images,
             count=1,
-            upload_to_drive=upload_to_drive,
+            upload_to_drive=False,
             drive_webapp_url=drive_webapp_url,
             drive_api_token=drive_api_token,
             fail_on_upload_error=fail_on_upload_error,
@@ -1115,7 +1300,7 @@ def run(
     selected_images, selection_mode = _select_random_images(
         candidate_images=candidate_images,
         count=num_images,
-        upload_to_drive=upload_to_drive,
+        upload_to_drive=False,
         drive_webapp_url=drive_webapp_url,
         drive_api_token=drive_api_token,
         fail_on_upload_error=fail_on_upload_error,

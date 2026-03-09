@@ -137,6 +137,8 @@ function _handleDownloadImage(e) {
     name: file.getName(),
     mime_type: file.getMimeType(),
     size_bytes: Number(file.getSize() || 0),
+    resource_key:
+      typeof file.getResourceKey === "function" ? String(file.getResourceKey() || "") : "",
     base64_data: Utilities.base64Encode(bytes),
   });
 }
@@ -331,6 +333,10 @@ function _buildSourceManifestEntries(sourceFolder) {
       image_id: imageId,
       file_id: file.getId(),
       name: imageId,
+      size_bytes: Number(file.getSize() || 0),
+      mime_type: String(file.getMimeType() || ""),
+      resource_key:
+        typeof file.getResourceKey === "function" ? String(file.getResourceKey() || "") : "",
     });
   }
 
