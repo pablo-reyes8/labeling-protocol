@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -370,7 +371,89 @@ class ExternalBBoxAnnotator:
 
         self._try_maximize()
         self._show_global_layout()
-        self.right_canvas.focus_set()
+        self._schedule_initial_foreground()
+
+    def _schedule_initial_foreground(self) -> None:
+        # Algunos launchers (Jupyter/IDE) dejan la ventana nueva en segundo plano.
+        # Hacemos varios intentos cortos mientras Tk termina de mapearla.
+        self.root.after(20, self._bring_main_window_to_front)
+        self.root.after(180, self._bring_main_window_to_front)
+        self.root.after(420, self._bring_main_window_to_front)
+
+    def _release_topmost(self, window: Any) -> None:
+        try:
+            if window.winfo_exists():
+                window.attributes("-topmost", False)
+        except Exception:
+            pass
+
+    def _try_force_foreground_on_windows(self, window: Any) -> None:
+        if os.name != "nt":
+            return
+
+        try:
+            import ctypes
+
+            hwnd = int(window.winfo_id())
+            user32 = ctypes.windll.user32
+            sw_restore = 9
+            hwnd_topmost = -1
+            hwnd_notopmost = -2
+            swp_nosize = 0x0001
+            swp_nomove = 0x0002
+            swp_showwindow = 0x0040
+            flags = swp_nosize | swp_nomove | swp_showwindow
+
+            user32.ShowWindow(hwnd, sw_restore)
+            user32.SetWindowPos(hwnd, hwnd_topmost, 0, 0, 0, 0, flags)
+            user32.SetWindowPos(hwnd, hwnd_notopmost, 0, 0, 0, 0, flags)
+            user32.BringWindowToTop(hwnd)
+            user32.SetForegroundWindow(hwnd)
+        except Exception:
+            pass
+
+    def _present_window(
+        self,
+        window: Any,
+        focus_widget: Any | None = None,
+        keep_topmost: bool = False,
+    ) -> None:
+        try:
+            window.update_idletasks()
+        except Exception:
+            pass
+
+        try:
+            window.deiconify()
+        except Exception:
+            pass
+
+        try:
+            window.lift()
+        except Exception:
+            pass
+
+        self._try_force_foreground_on_windows(window)
+
+        try:
+            window.attributes("-topmost", True)
+            if not keep_topmost:
+                window.after(250, lambda win=window: self._release_topmost(win))
+        except Exception:
+            pass
+
+        target = focus_widget or window
+        try:
+            target.focus_force()
+        except Exception:
+            try:
+                target.focus_set()
+            except Exception:
+                pass
+
+    def _bring_main_window_to_front(self) -> None:
+        focus_target = self.right_canvas if self.right_canvas.winfo_exists() else self.root
+        self._present_window(self.root, focus_widget=focus_target)
 
     def _try_maximize(self) -> None:
         try:
@@ -538,7 +621,7 @@ class ExternalBBoxAnnotator:
         dialog.bind("<Escape>", lambda _: on_cancel())
 
         self._place_prompt_window(dialog)
-        entry.focus_set()
+        self._present_window(dialog, focus_widget=entry)
         dialog.wait_window()
         return result["value"]
 
@@ -602,7 +685,7 @@ class ExternalBBoxAnnotator:
         dialog.bind("<Return>", lambda _: on_ok())
 
         self._place_prompt_window(dialog)
-        entry.focus_set()
+        self._present_window(dialog, focus_widget=entry)
         dialog.wait_window()
         return str(result["action"]), result["value"]
 
@@ -683,7 +766,7 @@ class ExternalBBoxAnnotator:
         dialog.bind("<Escape>", lambda _: on_back())
 
         self._place_prompt_window(dialog)
-        confirm_button.focus_set()
+        self._present_window(dialog, focus_widget=confirm_button)
         dialog.wait_window()
         return bool(result["omit"])
 
@@ -757,6 +840,7 @@ class ExternalBBoxAnnotator:
             return score
 
     def run(self) -> dict[str, Any]:
+        self.root.after(60, self._bring_main_window_to_front)
         self.root.after(120, self._start_pipeline)
         self.root.mainloop()
         if self.cancelled:
@@ -770,6 +854,7 @@ class ExternalBBoxAnnotator:
 
     def _start_pipeline(self) -> None:
         try:
+            self._bring_main_window_to_front()
             ethnicity = self._ask_ethnicity()
             global_score = self._ask_score("Score global", "Score global de envejecimiento (0-100):")
 
