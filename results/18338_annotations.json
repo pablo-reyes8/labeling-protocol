@@ -1,18 +1,19 @@
 {
-  "image_id": "confident-woman-business-owener-wearing-apron-face-portrait.jpg",
+  "image_id": "18338.png",
+  "image_path": "C:\\Users\\alejo\\OneDrive\\Escritorio\\Pablo\\Profesional\\Semillero\\protocolo de etiquetado\\.drive_cache\\1LN7VNGPRz6kZN5a_VvbOCkbMXG6y7F3u\\18338.png",
   "image_meta": {
-    "filename": "confident-woman-business-owener-wearing-apron-face-portrait.jpg",
-    "stem": "confident-woman-business-owener-wearing-apron-face-portrait",
-    "extension": ".jpg",
-    "file_size_bytes": 4119629,
-    "width_px": 2501,
-    "height_px": 2001,
-    "modified_at": "2026-02-19T05:12:52Z"
+    "filename": "18338.png",
+    "stem": "18338",
+    "extension": ".png",
+    "file_size_bytes": 1526661,
+    "width_px": 1024,
+    "height_px": 1024,
+    "modified_at": "2026-04-02T23:48:46Z"
   },
-  "created_at": "2026-02-19T06:24:07Z",
+  "created_at": "2026-04-02T23:52:23Z",
   "global": {
     "label_id": 0,
-    "score": 30,
+    "score": 10,
     "ethnicity": "Mujer Blanca"
   },
   "regions": {
@@ -25,14 +26,15 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 925,
-            "y": 422,
-            "w": 614,
-            "h": 230
+            "x": 265,
+            "y": 218,
+            "w": 482,
+            "h": 169
           },
-          "score": 10,
+          "score": 50,
           "ethnicity": "Mujer Blanca",
-          "omitted": false
+          "omitted": false,
+          "slot_status": "Annotated"
         }
       ]
     },
@@ -45,14 +47,15 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 1176,
-            "y": 667,
-            "w": 149,
-            "h": 127
+            "x": 442,
+            "y": 378,
+            "w": 135,
+            "h": 110
           },
-          "score": 15,
+          "score": 0,
           "ethnicity": "Mujer Blanca",
-          "omitted": false
+          "omitted": false,
+          "slot_status": "Annotated"
         }
       ]
     },
@@ -64,22 +67,19 @@
       "slots": [
         {
           "box_index": 1,
-          "bbox": {
-            "x": 841,
-            "y": 726,
-            "w": 112,
-            "h": 127
-          },
-          "score": 60,
+          "bbox": null,
+          "score": null,
           "ethnicity": "Mujer Blanca",
-          "omitted": false
+          "omitted": true,
+          "slot_status": "Missing"
         },
         {
           "box_index": 2,
           "bbox": null,
           "score": null,
           "ethnicity": "Mujer Blanca",
-          "omitted": true
+          "omitted": true,
+          "slot_status": "Missing"
         }
       ]
     },
@@ -92,26 +92,28 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 946,
-            "y": 819,
-            "w": 208,
-            "h": 109
+            "x": 326,
+            "y": 521,
+            "w": 136,
+            "h": 65
           },
-          "score": 10,
+          "score": 0,
           "ethnicity": "Mujer Blanca",
-          "omitted": false
+          "omitted": false,
+          "slot_status": "Annotated"
         },
         {
           "box_index": 2,
           "bbox": {
-            "x": 1353,
-            "y": 828,
-            "w": 208,
-            "h": 115
+            "x": 579,
+            "y": 516,
+            "w": 129,
+            "h": 69
           },
-          "score": 10,
+          "score": 0,
           "ethnicity": "Mujer Blanca",
-          "omitted": false
+          "omitted": false,
+          "slot_status": "Annotated"
         }
       ]
     },
@@ -124,21 +126,28 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 887,
-            "y": 984,
-            "w": 146,
-            "h": 285
+            "x": 273,
+            "y": 643,
+            "w": 172,
+            "h": 122
           },
-          "score": 15,
+          "score": 0,
           "ethnicity": "Mujer Blanca",
-          "omitted": false
+          "omitted": false,
+          "slot_status": "Annotated"
         },
         {
           "box_index": 2,
-          "bbox": null,
-          "score": null,
+          "bbox": {
+            "x": 579,
+            "y": 637,
+            "w": 168,
+            "h": 134
+          },
+          "score": 0,
           "ethnicity": "Mujer Blanca",
-          "omitted": true
+          "omitted": false,
+          "slot_status": "Annotated"
         }
       ]
     },
@@ -151,14 +160,15 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 1015,
-            "y": 1039,
-            "w": 484,
-            "h": 87
+            "x": 364,
+            "y": 697,
+            "w": 289,
+            "h": 71
           },
-          "score": 45,
+          "score": 0,
           "ethnicity": "Mujer Blanca",
-          "omitted": false
+          "omitted": false,
+          "slot_status": "Annotated"
         }
       ]
     },
@@ -171,21 +181,23 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 850,
-            "y": 1055,
-            "w": 252,
-            "h": 434
+            "x": 246,
+            "y": 718,
+            "w": 134,
+            "h": 224
           },
-          "score": 25,
+          "score": 0,
           "ethnicity": "Mujer Blanca",
-          "omitted": false
+          "omitted": false,
+          "slot_status": "Annotated"
         },
         {
           "box_index": 2,
           "bbox": null,
           "score": null,
           "ethnicity": "Mujer Blanca",
-          "omitted": true
+          "omitted": true,
+          "slot_status": "Missing"
         }
       ]
     },
@@ -198,14 +210,15 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 1195,
-            "y": 720,
-            "w": 133,
-            "h": 202
+            "x": 461,
+            "y": 509,
+            "w": 124,
+            "h": 140
           },
-          "score": 60,
+          "score": 0,
           "ethnicity": "Mujer Blanca",
-          "omitted": false
+          "omitted": false,
+          "slot_status": "Annotated"
         }
       ]
     }
@@ -218,14 +231,15 @@
       "region_alias": "Frente",
       "box_index": 1,
       "bbox": {
-        "x": 925,
-        "y": 422,
-        "w": 614,
-        "h": 230
+        "x": 265,
+        "y": 218,
+        "w": 482,
+        "h": 169
       },
-      "score": 10,
+      "score": 50,
       "ethnicity": "Mujer Blanca",
-      "omitted": false
+      "omitted": false,
+      "slot_status": "Annotated"
     },
     {
       "label_id": 2,
@@ -234,14 +248,15 @@
       "region_alias": "Entrecejo",
       "box_index": 1,
       "bbox": {
-        "x": 1176,
-        "y": 667,
-        "w": 149,
-        "h": 127
+        "x": 442,
+        "y": 378,
+        "w": 135,
+        "h": 110
       },
-      "score": 15,
+      "score": 0,
       "ethnicity": "Mujer Blanca",
-      "omitted": false
+      "omitted": false,
+      "slot_status": "Annotated"
     },
     {
       "label_id": 3,
@@ -249,15 +264,11 @@
       "region_name": "Patas de gallo",
       "region_alias": "Patas de gallo",
       "box_index": 1,
-      "bbox": {
-        "x": 841,
-        "y": 726,
-        "w": 112,
-        "h": 127
-      },
-      "score": 60,
+      "bbox": null,
+      "score": null,
       "ethnicity": "Mujer Blanca",
-      "omitted": false
+      "omitted": true,
+      "slot_status": "Missing"
     },
     {
       "label_id": 3,
@@ -268,7 +279,8 @@
       "bbox": null,
       "score": null,
       "ethnicity": "Mujer Blanca",
-      "omitted": true
+      "omitted": true,
+      "slot_status": "Missing"
     },
     {
       "label_id": 4,
@@ -277,14 +289,15 @@
       "region_alias": "Ojeras",
       "box_index": 1,
       "bbox": {
-        "x": 946,
-        "y": 819,
-        "w": 208,
-        "h": 109
+        "x": 326,
+        "y": 521,
+        "w": 136,
+        "h": 65
       },
-      "score": 10,
+      "score": 0,
       "ethnicity": "Mujer Blanca",
-      "omitted": false
+      "omitted": false,
+      "slot_status": "Annotated"
     },
     {
       "label_id": 4,
@@ -293,14 +306,15 @@
       "region_alias": "Ojeras",
       "box_index": 2,
       "bbox": {
-        "x": 1353,
-        "y": 828,
-        "w": 208,
-        "h": 115
+        "x": 579,
+        "y": 516,
+        "w": 129,
+        "h": 69
       },
-      "score": 10,
+      "score": 0,
       "ethnicity": "Mujer Blanca",
-      "omitted": false
+      "omitted": false,
+      "slot_status": "Annotated"
     },
     {
       "label_id": 5,
@@ -309,14 +323,15 @@
       "region_alias": "Surcos nasogenianos",
       "box_index": 1,
       "bbox": {
-        "x": 887,
-        "y": 984,
-        "w": 146,
-        "h": 285
+        "x": 273,
+        "y": 643,
+        "w": 172,
+        "h": 122
       },
-      "score": 15,
+      "score": 0,
       "ethnicity": "Mujer Blanca",
-      "omitted": false
+      "omitted": false,
+      "slot_status": "Annotated"
     },
     {
       "label_id": 5,
@@ -324,10 +339,16 @@
       "region_name": "Surcos Nasogenianos",
       "region_alias": "Surcos nasogenianos",
       "box_index": 2,
-      "bbox": null,
-      "score": null,
+      "bbox": {
+        "x": 579,
+        "y": 637,
+        "w": 168,
+        "h": 134
+      },
+      "score": 0,
       "ethnicity": "Mujer Blanca",
-      "omitted": true
+      "omitted": false,
+      "slot_status": "Annotated"
     },
     {
       "label_id": 6,
@@ -336,14 +357,15 @@
       "region_alias": "Labio superior",
       "box_index": 1,
       "bbox": {
-        "x": 1015,
-        "y": 1039,
-        "w": 484,
-        "h": 87
+        "x": 364,
+        "y": 697,
+        "w": 289,
+        "h": 71
       },
-      "score": 45,
+      "score": 0,
       "ethnicity": "Mujer Blanca",
-      "omitted": false
+      "omitted": false,
+      "slot_status": "Annotated"
     },
     {
       "label_id": 7,
@@ -352,14 +374,15 @@
       "region_alias": "Lineas marioneta",
       "box_index": 1,
       "bbox": {
-        "x": 850,
-        "y": 1055,
-        "w": 252,
-        "h": 434
+        "x": 246,
+        "y": 718,
+        "w": 134,
+        "h": 224
       },
-      "score": 25,
+      "score": 0,
       "ethnicity": "Mujer Blanca",
-      "omitted": false
+      "omitted": false,
+      "slot_status": "Annotated"
     },
     {
       "label_id": 7,
@@ -370,7 +393,8 @@
       "bbox": null,
       "score": null,
       "ethnicity": "Mujer Blanca",
-      "omitted": true
+      "omitted": true,
+      "slot_status": "Missing"
     },
     {
       "label_id": 8,
@@ -379,14 +403,15 @@
       "region_alias": "Puente nasal",
       "box_index": 1,
       "bbox": {
-        "x": 1195,
-        "y": 720,
-        "w": 133,
-        "h": 202
+        "x": 461,
+        "y": 509,
+        "w": 124,
+        "h": 140
       },
-      "score": 60,
+      "score": 0,
       "ethnicity": "Mujer Blanca",
-      "omitted": false
+      "omitted": false,
+      "slot_status": "Annotated"
     }
   ]
 }

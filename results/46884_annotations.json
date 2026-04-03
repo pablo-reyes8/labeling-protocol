@@ -1,20 +1,20 @@
 {
-  "image_id": "13886.png",
-  "image_path": "C:\\Users\\alejo\\OneDrive\\Escritorio\\Pablo\\Profesional\\Semillero\\protocolo de etiquetado\\.drive_cache\\1LN7VNGPRz6kZN5a_VvbOCkbMXG6y7F3u\\13886.png",
+  "image_id": "46884.png",
+  "image_path": "C:\\Users\\alejo\\OneDrive\\Escritorio\\Pablo\\Profesional\\Semillero\\protocolo de etiquetado\\.drive_cache\\1LN7VNGPRz6kZN5a_VvbOCkbMXG6y7F3u\\46884.png",
   "image_meta": {
-    "filename": "13886.png",
-    "stem": "13886",
+    "filename": "46884.png",
+    "stem": "46884",
     "extension": ".png",
-    "file_size_bytes": 1416082,
+    "file_size_bytes": 1663206,
     "width_px": 1024,
     "height_px": 1024,
-    "modified_at": "2026-03-09T05:20:58Z"
+    "modified_at": "2026-04-02T23:48:58Z"
   },
-  "created_at": "2026-03-09T05:20:59Z",
+  "created_at": "2026-04-02T23:53:52Z",
   "global": {
     "label_id": 0,
-    "score": 50,
-    "ethnicity": "Hombre Blanco"
+    "score": 0,
+    "ethnicity": "Mujer Blanca"
   },
   "regions": {
     "frente": {
@@ -25,16 +25,11 @@
       "slots": [
         {
           "box_index": 1,
-          "bbox": {
-            "x": 294,
-            "y": 230,
-            "w": 456,
-            "h": 163
-          },
-          "score": 20,
-          "ethnicity": "Hombre Blanco",
-          "omitted": false,
-          "slot_status": "Annotated"
+          "bbox": null,
+          "score": null,
+          "ethnicity": "Mujer Blanca",
+          "omitted": true,
+          "slot_status": "Missing"
         }
       ]
     },
@@ -47,13 +42,13 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 449,
-            "y": 370,
-            "w": 109,
-            "h": 116
+            "x": 464,
+            "y": 356,
+            "w": 121,
+            "h": 128
           },
-          "score": 30,
-          "ethnicity": "Hombre Blanco",
+          "score": 0,
+          "ethnicity": "Mujer Blanca",
           "omitted": false,
           "slot_status": "Annotated"
         }
@@ -68,28 +63,23 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 257,
-            "y": 468,
-            "w": 64,
-            "h": 84
+            "x": 181,
+            "y": 424,
+            "w": 126,
+            "h": 111
           },
-          "score": 50,
-          "ethnicity": "Hombre Blanco",
+          "score": 0,
+          "ethnicity": "Mujer Blanca",
           "omitted": false,
           "slot_status": "Annotated"
         },
         {
           "box_index": 2,
-          "bbox": {
-            "x": 715,
-            "y": 441,
-            "w": 84,
-            "h": 132
-          },
-          "score": 60,
-          "ethnicity": "Hombre Blanco",
-          "omitted": false,
-          "slot_status": "Annotated"
+          "bbox": null,
+          "score": null,
+          "ethnicity": "Mujer Blanca",
+          "omitted": true,
+          "slot_status": "Missing"
         }
       ]
     },
@@ -102,26 +92,26 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 309,
-            "y": 505,
-            "w": 136,
-            "h": 82
+            "x": 284,
+            "y": 503,
+            "w": 177,
+            "h": 86
           },
-          "score": 60,
-          "ethnicity": "Hombre Blanco",
+          "score": 0,
+          "ethnicity": "Mujer Blanca",
           "omitted": false,
           "slot_status": "Annotated"
         },
         {
           "box_index": 2,
           "bbox": {
-            "x": 572,
-            "y": 495,
-            "w": 143,
-            "h": 92
+            "x": 587,
+            "y": 508,
+            "w": 145,
+            "h": 78
           },
-          "score": 70,
-          "ethnicity": "Hombre Blanco",
+          "score": 0,
+          "ethnicity": "Mujer Blanca",
           "omitted": false,
           "slot_status": "Annotated"
         }
@@ -136,23 +126,28 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 304,
-            "y": 599,
-            "w": 117,
-            "h": 111
+            "x": 287,
+            "y": 607,
+            "w": 165,
+            "h": 118
           },
-          "score": 10,
-          "ethnicity": "Hombre Blanco",
+          "score": 0,
+          "ethnicity": "Mujer Blanca",
           "omitted": false,
           "slot_status": "Annotated"
         },
         {
           "box_index": 2,
-          "bbox": null,
-          "score": null,
-          "ethnicity": "Hombre Blanco",
-          "omitted": true,
-          "slot_status": "Missing"
+          "bbox": {
+            "x": 596,
+            "y": 617,
+            "w": 134,
+            "h": 113
+          },
+          "score": 0,
+          "ethnicity": "Mujer Blanca",
+          "omitted": false,
+          "slot_status": "Annotated"
         }
       ]
     },
@@ -165,13 +160,13 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 358,
-            "y": 649,
-            "w": 315,
-            "h": 61
+            "x": 384,
+            "y": 636,
+            "w": 269,
+            "h": 67
           },
-          "score": 50,
-          "ethnicity": "Hombre Blanco",
+          "score": 0,
+          "ethnicity": "Mujer Blanca",
           "omitted": false,
           "slot_status": "Annotated"
         }
@@ -186,26 +181,26 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 274,
-            "y": 681,
-            "w": 126,
-            "h": 225
+            "x": 246,
+            "y": 684,
+            "w": 175,
+            "h": 199
           },
-          "score": 20,
-          "ethnicity": "Hombre Blanco",
+          "score": 0,
+          "ethnicity": "Mujer Blanca",
           "omitted": false,
           "slot_status": "Annotated"
         },
         {
           "box_index": 2,
           "bbox": {
-            "x": 647,
-            "y": 691,
-            "w": 120,
-            "h": 256
+            "x": 607,
+            "y": 684,
+            "w": 117,
+            "h": 194
           },
-          "score": 70,
-          "ethnicity": "Hombre Blanco",
+          "score": 0,
+          "ethnicity": "Mujer Blanca",
           "omitted": false,
           "slot_status": "Annotated"
         }
@@ -220,13 +215,13 @@
         {
           "box_index": 1,
           "bbox": {
-            "x": 461,
-            "y": 449,
-            "w": 98,
-            "h": 131
+            "x": 486,
+            "y": 464,
+            "w": 108,
+            "h": 115
           },
-          "score": 10,
-          "ethnicity": "Hombre Blanco",
+          "score": 0,
+          "ethnicity": "Mujer Blanca",
           "omitted": false,
           "slot_status": "Annotated"
         }
@@ -240,16 +235,11 @@
       "region_name": "Frente",
       "region_alias": "Frente",
       "box_index": 1,
-      "bbox": {
-        "x": 294,
-        "y": 230,
-        "w": 456,
-        "h": 163
-      },
-      "score": 20,
-      "ethnicity": "Hombre Blanco",
-      "omitted": false,
-      "slot_status": "Annotated"
+      "bbox": null,
+      "score": null,
+      "ethnicity": "Mujer Blanca",
+      "omitted": true,
+      "slot_status": "Missing"
     },
     {
       "label_id": 2,
@@ -258,13 +248,13 @@
       "region_alias": "Entrecejo",
       "box_index": 1,
       "bbox": {
-        "x": 449,
-        "y": 370,
-        "w": 109,
-        "h": 116
+        "x": 464,
+        "y": 356,
+        "w": 121,
+        "h": 128
       },
-      "score": 30,
-      "ethnicity": "Hombre Blanco",
+      "score": 0,
+      "ethnicity": "Mujer Blanca",
       "omitted": false,
       "slot_status": "Annotated"
     },
@@ -275,95 +265,95 @@
       "region_alias": "Patas de gallo",
       "box_index": 1,
       "bbox": {
-        "x": 257,
-        "y": 468,
-        "w": 64,
-        "h": 84
-      },
-      "score": 50,
-      "ethnicity": "Hombre Blanco",
-      "omitted": false,
-      "slot_status": "Annotated"
-    },
-    {
-      "label_id": 3,
-      "region_key": "patas_de_gallo",
-      "region_name": "Patas de gallo",
-      "region_alias": "Patas de gallo",
-      "box_index": 2,
-      "bbox": {
-        "x": 715,
-        "y": 441,
-        "w": 84,
-        "h": 132
-      },
-      "score": 60,
-      "ethnicity": "Hombre Blanco",
-      "omitted": false,
-      "slot_status": "Annotated"
-    },
-    {
-      "label_id": 4,
-      "region_key": "bajo_ojo_ojeras",
-      "region_name": "Bajo ojo / Ojeras",
-      "region_alias": "Ojeras",
-      "box_index": 1,
-      "bbox": {
-        "x": 309,
-        "y": 505,
-        "w": 136,
-        "h": 82
-      },
-      "score": 60,
-      "ethnicity": "Hombre Blanco",
-      "omitted": false,
-      "slot_status": "Annotated"
-    },
-    {
-      "label_id": 4,
-      "region_key": "bajo_ojo_ojeras",
-      "region_name": "Bajo ojo / Ojeras",
-      "region_alias": "Ojeras",
-      "box_index": 2,
-      "bbox": {
-        "x": 572,
-        "y": 495,
-        "w": 143,
-        "h": 92
-      },
-      "score": 70,
-      "ethnicity": "Hombre Blanco",
-      "omitted": false,
-      "slot_status": "Annotated"
-    },
-    {
-      "label_id": 5,
-      "region_key": "surcos_nasogenianos",
-      "region_name": "Surcos Nasogenianos",
-      "region_alias": "Surcos nasogenianos",
-      "box_index": 1,
-      "bbox": {
-        "x": 304,
-        "y": 599,
-        "w": 117,
+        "x": 181,
+        "y": 424,
+        "w": 126,
         "h": 111
       },
-      "score": 10,
-      "ethnicity": "Hombre Blanco",
+      "score": 0,
+      "ethnicity": "Mujer Blanca",
       "omitted": false,
       "slot_status": "Annotated"
     },
     {
-      "label_id": 5,
-      "region_key": "surcos_nasogenianos",
-      "region_name": "Surcos Nasogenianos",
-      "region_alias": "Surcos nasogenianos",
+      "label_id": 3,
+      "region_key": "patas_de_gallo",
+      "region_name": "Patas de gallo",
+      "region_alias": "Patas de gallo",
       "box_index": 2,
       "bbox": null,
       "score": null,
-      "ethnicity": "Hombre Blanco",
+      "ethnicity": "Mujer Blanca",
       "omitted": true,
       "slot_status": "Missing"
+    },
+    {
+      "label_id": 4,
+      "region_key": "bajo_ojo_ojeras",
+      "region_name": "Bajo ojo / Ojeras",
+      "region_alias": "Ojeras",
+      "box_index": 1,
+      "bbox": {
+        "x": 284,
+        "y": 503,
+        "w": 177,
+        "h": 86
+      },
+      "score": 0,
+      "ethnicity": "Mujer Blanca",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 4,
+      "region_key": "bajo_ojo_ojeras",
+      "region_name": "Bajo ojo / Ojeras",
+      "region_alias": "Ojeras",
+      "box_index": 2,
+      "bbox": {
+        "x": 587,
+        "y": 508,
+        "w": 145,
+        "h": 78
+      },
+      "score": 0,
+      "ethnicity": "Mujer Blanca",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 5,
+      "region_key": "surcos_nasogenianos",
+      "region_name": "Surcos Nasogenianos",
+      "region_alias": "Surcos nasogenianos",
+      "box_index": 1,
+      "bbox": {
+        "x": 287,
+        "y": 607,
+        "w": 165,
+        "h": 118
+      },
+      "score": 0,
+      "ethnicity": "Mujer Blanca",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 5,
+      "region_key": "surcos_nasogenianos",
+      "region_name": "Surcos Nasogenianos",
+      "region_alias": "Surcos nasogenianos",
+      "box_index": 2,
+      "bbox": {
+        "x": 596,
+        "y": 617,
+        "w": 134,
+        "h": 113
+      },
+      "score": 0,
+      "ethnicity": "Mujer Blanca",
+      "omitted": false,
+      "slot_status": "Annotated"
     },
     {
       "label_id": 6,
@@ -372,13 +362,13 @@
       "region_alias": "Labio superior",
       "box_index": 1,
       "bbox": {
-        "x": 358,
-        "y": 649,
-        "w": 315,
-        "h": 61
+        "x": 384,
+        "y": 636,
+        "w": 269,
+        "h": 67
       },
-      "score": 50,
-      "ethnicity": "Hombre Blanco",
+      "score": 0,
+      "ethnicity": "Mujer Blanca",
       "omitted": false,
       "slot_status": "Annotated"
     },
@@ -389,13 +379,13 @@
       "region_alias": "Lineas marioneta",
       "box_index": 1,
       "bbox": {
-        "x": 274,
-        "y": 681,
-        "w": 126,
-        "h": 225
+        "x": 246,
+        "y": 684,
+        "w": 175,
+        "h": 199
       },
-      "score": 20,
-      "ethnicity": "Hombre Blanco",
+      "score": 0,
+      "ethnicity": "Mujer Blanca",
       "omitted": false,
       "slot_status": "Annotated"
     },
@@ -406,13 +396,13 @@
       "region_alias": "Lineas marioneta",
       "box_index": 2,
       "bbox": {
-        "x": 647,
-        "y": 691,
-        "w": 120,
-        "h": 256
+        "x": 607,
+        "y": 684,
+        "w": 117,
+        "h": 194
       },
-      "score": 70,
-      "ethnicity": "Hombre Blanco",
+      "score": 0,
+      "ethnicity": "Mujer Blanca",
       "omitted": false,
       "slot_status": "Annotated"
     },
@@ -423,13 +413,13 @@
       "region_alias": "Puente nasal",
       "box_index": 1,
       "bbox": {
-        "x": 461,
-        "y": 449,
-        "w": 98,
-        "h": 131
+        "x": 486,
+        "y": 464,
+        "w": 108,
+        "h": 115
       },
-      "score": 10,
-      "ethnicity": "Hombre Blanco",
+      "score": 0,
+      "ethnicity": "Mujer Blanca",
       "omitted": false,
       "slot_status": "Annotated"
     }
