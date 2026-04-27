@@ -1,0 +1,447 @@
+{
+  "image_id": "46984.png",
+  "image_path": "C:\\Users\\alejo\\OneDrive\\Escritorio\\Pablo\\Profesional\\Semillero\\protocolo de etiquetado\\.drive_cache\\1LN7VNGPRz6kZN5a_VvbOCkbMXG6y7F3u\\46984.png",
+  "image_meta": {
+    "filename": "46984.png",
+    "stem": "46984",
+    "extension": ".png",
+    "file_size_bytes": 1446724,
+    "width_px": 1024,
+    "height_px": 1024,
+    "modified_at": "2026-04-26T22:17:27Z"
+  },
+  "created_at": "2026-04-26T22:19:23Z",
+  "global": {
+    "label_id": 0,
+    "score": 20,
+    "ethnicity": "Mujer Blanca Pelinegra"
+  },
+  "regions": {
+    "frente": {
+      "label_id": 1,
+      "region_name": "Frente",
+      "region_alias": "Frente",
+      "expected_boxes": 1,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 293,
+            "y": 265,
+            "w": 445,
+            "h": 116
+          },
+          "score": 0,
+          "ethnicity": "Mujer Blanca Pelinegra",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    },
+    "glabela_entrecejo": {
+      "label_id": 2,
+      "region_name": "Glabela / Entrecejo",
+      "region_alias": "Entrecejo",
+      "expected_boxes": 1,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 447,
+            "y": 375,
+            "w": 130,
+            "h": 114
+          },
+          "score": 0,
+          "ethnicity": "Mujer Blanca Pelinegra",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    },
+    "patas_de_gallo": {
+      "label_id": 3,
+      "region_name": "Patas de gallo",
+      "region_alias": "Patas de gallo",
+      "expected_boxes": 2,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 247,
+            "y": 462,
+            "w": 80,
+            "h": 78
+          },
+          "score": 60,
+          "ethnicity": "Mujer Blanca Pelinegra",
+          "omitted": false,
+          "slot_status": "Annotated"
+        },
+        {
+          "box_index": 2,
+          "bbox": {
+            "x": 725,
+            "y": 444,
+            "w": 80,
+            "h": 122
+          },
+          "score": 40,
+          "ethnicity": "Mujer Blanca Pelinegra",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    },
+    "bajo_ojo_ojeras": {
+      "label_id": 4,
+      "region_name": "Bajo ojo / Ojeras",
+      "region_alias": "Ojeras",
+      "expected_boxes": 2,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 289,
+            "y": 502,
+            "w": 172,
+            "h": 84
+          },
+          "score": 40,
+          "ethnicity": "Mujer Blanca Pelinegra",
+          "omitted": false,
+          "slot_status": "Annotated"
+        },
+        {
+          "box_index": 2,
+          "bbox": {
+            "x": 576,
+            "y": 501,
+            "w": 164,
+            "h": 91
+          },
+          "score": 45,
+          "ethnicity": "Mujer Blanca Pelinegra",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    },
+    "surcos_nasogenianos": {
+      "label_id": 5,
+      "region_name": "Surcos Nasogenianos",
+      "region_alias": "Surcos nasogenianos",
+      "expected_boxes": 2,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 252,
+            "y": 597,
+            "w": 162,
+            "h": 130
+          },
+          "score": 40,
+          "ethnicity": "Mujer Blanca Pelinegra",
+          "omitted": false,
+          "slot_status": "Annotated"
+        },
+        {
+          "box_index": 2,
+          "bbox": {
+            "x": 602,
+            "y": 585,
+            "w": 180,
+            "h": 137
+          },
+          "score": 50,
+          "ethnicity": "Mujer Blanca Pelinegra",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    },
+    "labio_superior": {
+      "label_id": 6,
+      "region_name": "Labio superior",
+      "region_alias": "Labio superior",
+      "expected_boxes": 1,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 330,
+            "y": 643,
+            "w": 354,
+            "h": 60
+          },
+          "score": 30,
+          "ethnicity": "Mujer Blanca Pelinegra",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    },
+    "comisuras_lineas_marioneta": {
+      "label_id": 7,
+      "region_name": "Comisuras / lineas de marioneta",
+      "region_alias": "Lineas marioneta",
+      "expected_boxes": 2,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 243,
+            "y": 695,
+            "w": 151,
+            "h": 231
+          },
+          "score": 20,
+          "ethnicity": "Mujer Blanca Pelinegra",
+          "omitted": false,
+          "slot_status": "Annotated"
+        },
+        {
+          "box_index": 2,
+          "bbox": {
+            "x": 650,
+            "y": 678,
+            "w": 132,
+            "h": 241
+          },
+          "score": 20,
+          "ethnicity": "Mujer Blanca Pelinegra",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    },
+    "puente_nasal": {
+      "label_id": 8,
+      "region_name": "Puente Nasal",
+      "region_alias": "Puente nasal",
+      "expected_boxes": 1,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 464,
+            "y": 447,
+            "w": 96,
+            "h": 138
+          },
+          "score": 0,
+          "ethnicity": "Mujer Blanca Pelinegra",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    }
+  },
+  "all_slots": [
+    {
+      "label_id": 1,
+      "region_key": "frente",
+      "region_name": "Frente",
+      "region_alias": "Frente",
+      "box_index": 1,
+      "bbox": {
+        "x": 293,
+        "y": 265,
+        "w": 445,
+        "h": 116
+      },
+      "score": 0,
+      "ethnicity": "Mujer Blanca Pelinegra",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 2,
+      "region_key": "glabela_entrecejo",
+      "region_name": "Glabela / Entrecejo",
+      "region_alias": "Entrecejo",
+      "box_index": 1,
+      "bbox": {
+        "x": 447,
+        "y": 375,
+        "w": 130,
+        "h": 114
+      },
+      "score": 0,
+      "ethnicity": "Mujer Blanca Pelinegra",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 3,
+      "region_key": "patas_de_gallo",
+      "region_name": "Patas de gallo",
+      "region_alias": "Patas de gallo",
+      "box_index": 1,
+      "bbox": {
+        "x": 247,
+        "y": 462,
+        "w": 80,
+        "h": 78
+      },
+      "score": 60,
+      "ethnicity": "Mujer Blanca Pelinegra",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 3,
+      "region_key": "patas_de_gallo",
+      "region_name": "Patas de gallo",
+      "region_alias": "Patas de gallo",
+      "box_index": 2,
+      "bbox": {
+        "x": 725,
+        "y": 444,
+        "w": 80,
+        "h": 122
+      },
+      "score": 40,
+      "ethnicity": "Mujer Blanca Pelinegra",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 4,
+      "region_key": "bajo_ojo_ojeras",
+      "region_name": "Bajo ojo / Ojeras",
+      "region_alias": "Ojeras",
+      "box_index": 1,
+      "bbox": {
+        "x": 289,
+        "y": 502,
+        "w": 172,
+        "h": 84
+      },
+      "score": 40,
+      "ethnicity": "Mujer Blanca Pelinegra",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 4,
+      "region_key": "bajo_ojo_ojeras",
+      "region_name": "Bajo ojo / Ojeras",
+      "region_alias": "Ojeras",
+      "box_index": 2,
+      "bbox": {
+        "x": 576,
+        "y": 501,
+        "w": 164,
+        "h": 91
+      },
+      "score": 45,
+      "ethnicity": "Mujer Blanca Pelinegra",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 5,
+      "region_key": "surcos_nasogenianos",
+      "region_name": "Surcos Nasogenianos",
+      "region_alias": "Surcos nasogenianos",
+      "box_index": 1,
+      "bbox": {
+        "x": 252,
+        "y": 597,
+        "w": 162,
+        "h": 130
+      },
+      "score": 40,
+      "ethnicity": "Mujer Blanca Pelinegra",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 5,
+      "region_key": "surcos_nasogenianos",
+      "region_name": "Surcos Nasogenianos",
+      "region_alias": "Surcos nasogenianos",
+      "box_index": 2,
+      "bbox": {
+        "x": 602,
+        "y": 585,
+        "w": 180,
+        "h": 137
+      },
+      "score": 50,
+      "ethnicity": "Mujer Blanca Pelinegra",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 6,
+      "region_key": "labio_superior",
+      "region_name": "Labio superior",
+      "region_alias": "Labio superior",
+      "box_index": 1,
+      "bbox": {
+        "x": 330,
+        "y": 643,
+        "w": 354,
+        "h": 60
+      },
+      "score": 30,
+      "ethnicity": "Mujer Blanca Pelinegra",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 7,
+      "region_key": "comisuras_lineas_marioneta",
+      "region_name": "Comisuras / lineas de marioneta",
+      "region_alias": "Lineas marioneta",
+      "box_index": 1,
+      "bbox": {
+        "x": 243,
+        "y": 695,
+        "w": 151,
+        "h": 231
+      },
+      "score": 20,
+      "ethnicity": "Mujer Blanca Pelinegra",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 7,
+      "region_key": "comisuras_lineas_marioneta",
+      "region_name": "Comisuras / lineas de marioneta",
+      "region_alias": "Lineas marioneta",
+      "box_index": 2,
+      "bbox": {
+        "x": 650,
+        "y": 678,
+        "w": 132,
+        "h": 241
+      },
+      "score": 20,
+      "ethnicity": "Mujer Blanca Pelinegra",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 8,
+      "region_key": "puente_nasal",
+      "region_name": "Puente Nasal",
+      "region_alias": "Puente nasal",
+      "box_index": 1,
+      "bbox": {
+        "x": 464,
+        "y": 447,
+        "w": 96,
+        "h": 138
+      },
+      "score": 0,
+      "ethnicity": "Mujer Blanca Pelinegra",
+      "omitted": false,
+      "slot_status": "Annotated"
+    }
+  ]
+}

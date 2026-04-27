@@ -175,6 +175,8 @@ class ExternalBBoxAnnotator:
         self.layout_mode = "none"
         self.left_canvas_image_id: int | None = None
         self.right_canvas_image_id: int | None = None
+        self._done_var: tk.BooleanVar | None = None
+        self.session_keep_topmost = True
 
         self.result: dict[str, Any] = {
             "image_id": self.image_path.name,
@@ -435,9 +437,10 @@ class ExternalBBoxAnnotator:
 
         self._try_force_foreground_on_windows(window)
 
+        must_keep_topmost = keep_topmost or self.session_keep_topmost
         try:
             window.attributes("-topmost", True)
-            if not keep_topmost:
+            if not must_keep_topmost:
                 window.after(250, lambda win=window: self._release_topmost(win))
         except Exception:
             pass
@@ -453,7 +456,20 @@ class ExternalBBoxAnnotator:
 
     def _bring_main_window_to_front(self) -> None:
         focus_target = self.right_canvas if self.right_canvas.winfo_exists() else self.root
-        self._present_window(self.root, focus_widget=focus_target)
+        self._present_window(self.root, focus_widget=focus_target, keep_topmost=True)
+
+    def _restore_main_window_after_dialog(self) -> None:
+        if not self.root.winfo_exists():
+            return
+
+        focus_target = self.right_canvas if self.right_canvas.winfo_exists() else self.root
+        self._present_window(self.root, focus_widget=focus_target, keep_topmost=True)
+        self.root.update_idletasks()
+        self.root.after(80, self._bring_main_window_to_front)
+
+    def _disable_session_topmost(self) -> None:
+        self.session_keep_topmost = False
+        self._release_topmost(self.root)
 
     def _try_maximize(self) -> None:
         try:
@@ -507,6 +523,8 @@ class ExternalBBoxAnnotator:
         )
         # Keep a direct reference on the widget to avoid any Tk image drop.
         self.right_canvas.image = self.target_global_photo
+        self.root.update_idletasks()
+        self._bring_main_window_to_front()
 
         self._set_step("Paso 0/8 | Datos globales")
         self._set_status(
@@ -529,6 +547,8 @@ class ExternalBBoxAnnotator:
         self.right_canvas_image_id = self.right_canvas.create_image(0, 0, image=self.target_panel_photo, anchor="nw")
         self.right_canvas.image = self.target_panel_photo
         self.right_canvas.focus_set()
+        self.root.update_idletasks()
+        self._bring_main_window_to_front()
 
     def _update_reference_panel(self, region: RegionSpec) -> None:
         self.left_canvas.delete("all")
@@ -623,6 +643,7 @@ class ExternalBBoxAnnotator:
         self._place_prompt_window(dialog)
         self._present_window(dialog, focus_widget=entry)
         dialog.wait_window()
+        self._restore_main_window_after_dialog()
         return result["value"]
 
     def _prompt_score_value(self, title: str, prompt: str, initial: str = "") -> tuple[str, str | None]:
@@ -687,6 +708,7 @@ class ExternalBBoxAnnotator:
         self._place_prompt_window(dialog)
         self._present_window(dialog, focus_widget=entry)
         dialog.wait_window()
+        self._restore_main_window_after_dialog()
         return str(result["action"]), result["value"]
 
     def _confirm_retry(self, message: str) -> bool:
@@ -768,6 +790,7 @@ class ExternalBBoxAnnotator:
         self._place_prompt_window(dialog)
         self._present_window(dialog, focus_widget=confirm_button)
         dialog.wait_window()
+        self._restore_main_window_after_dialog()
         return bool(result["omit"])
 
     def _ask_ethnicity(self) -> str:
@@ -840,17 +863,29 @@ class ExternalBBoxAnnotator:
             return score
 
     def run(self) -> dict[str, Any]:
+        self._done_var = tk.BooleanVar(master=self.root, value=False)
         self.root.after(60, self._bring_main_window_to_front)
         self.root.after(120, self._start_pipeline)
-        self.root.mainloop()
+        if self.close_root_on_exit:
+            self.root.mainloop()
+        else:
+            self.root.wait_variable(self._done_var)
         if self.cancelled:
             raise RuntimeError("Anotacion cancelada.")
         return self.result
 
     def _quit_app(self) -> None:
-        self.root.quit()
-        if self.close_root_on_exit and self.root.winfo_exists():
-            self.root.destroy()
+        self._disable_session_topmost()
+        if self._done_var is not None:
+            try:
+                self._done_var.set(True)
+            except Exception:
+                pass
+
+        if self.close_root_on_exit:
+            self.root.quit()
+            if self.root.winfo_exists():
+                self.root.destroy()
 
     def _start_pipeline(self) -> None:
         try:
@@ -1255,6 +1290,7 @@ class ExternalBBoxAnnotator:
             if zoom_window is not None and zoom_window.winfo_exists():
                 self._remember_zoom_window_position(zoom_window)
                 zoom_window.destroy()
+            self._restore_main_window_after_dialog()
 
     def _build_region_slots(
         self,
@@ -1370,6 +1406,10 @@ class ExternalBBoxAnnotator:
 def _reset_root_widgets(root: tk.Tk) -> None:
     for child in list(root.winfo_children()):
         child.destroy()
+    try:
+        root.update_idletasks()
+    except Exception:
+        pass
 
 
 def run_external_annotation(
@@ -1386,6 +1426,11 @@ def run_external_annotation(
         _reset_root_widgets(root)
         if root.winfo_exists():
             root.deiconify()
+            try:
+                root.update_idletasks()
+                root.lift()
+            except Exception:
+                pass
 
     app = ExternalBBoxAnnotator(
         root=root,

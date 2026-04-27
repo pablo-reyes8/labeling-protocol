@@ -1,0 +1,447 @@
+{
+  "image_id": "53841.png",
+  "image_path": "C:\\Users\\alejo\\OneDrive\\Escritorio\\Pablo\\Profesional\\Semillero\\protocolo de etiquetado\\.drive_cache\\1LN7VNGPRz6kZN5a_VvbOCkbMXG6y7F3u\\53841.png",
+  "image_meta": {
+    "filename": "53841.png",
+    "stem": "53841",
+    "extension": ".png",
+    "file_size_bytes": 1100893,
+    "width_px": 1024,
+    "height_px": 1024,
+    "modified_at": "2026-04-26T22:09:33Z"
+  },
+  "created_at": "2026-04-26T22:09:34Z",
+  "global": {
+    "label_id": 0,
+    "score": 35,
+    "ethnicity": "Hombre Moreno"
+  },
+  "regions": {
+    "frente": {
+      "label_id": 1,
+      "region_name": "Frente",
+      "region_alias": "Frente",
+      "expected_boxes": 1,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 289,
+            "y": 174,
+            "w": 472,
+            "h": 228
+          },
+          "score": 35,
+          "ethnicity": "Hombre Moreno",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    },
+    "glabela_entrecejo": {
+      "label_id": 2,
+      "region_name": "Glabela / Entrecejo",
+      "region_alias": "Entrecejo",
+      "expected_boxes": 1,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 458,
+            "y": 377,
+            "w": 102,
+            "h": 111
+          },
+          "score": 35,
+          "ethnicity": "Hombre Moreno",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    },
+    "patas_de_gallo": {
+      "label_id": 3,
+      "region_name": "Patas de gallo",
+      "region_alias": "Patas de gallo",
+      "expected_boxes": 2,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 239,
+            "y": 427,
+            "w": 98,
+            "h": 119
+          },
+          "score": 15,
+          "ethnicity": "Hombre Moreno",
+          "omitted": false,
+          "slot_status": "Annotated"
+        },
+        {
+          "box_index": 2,
+          "bbox": {
+            "x": 715,
+            "y": 425,
+            "w": 118,
+            "h": 131
+          },
+          "score": 0,
+          "ethnicity": "Hombre Moreno",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    },
+    "bajo_ojo_ojeras": {
+      "label_id": 4,
+      "region_name": "Bajo ojo / Ojeras",
+      "region_alias": "Ojeras",
+      "expected_boxes": 2,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 296,
+            "y": 509,
+            "w": 159,
+            "h": 98
+          },
+          "score": 35,
+          "ethnicity": "Hombre Moreno",
+          "omitted": false,
+          "slot_status": "Annotated"
+        },
+        {
+          "box_index": 2,
+          "bbox": {
+            "x": 586,
+            "y": 511,
+            "w": 175,
+            "h": 99
+          },
+          "score": 35,
+          "ethnicity": "Hombre Moreno",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    },
+    "surcos_nasogenianos": {
+      "label_id": 5,
+      "region_name": "Surcos Nasogenianos",
+      "region_alias": "Surcos nasogenianos",
+      "expected_boxes": 2,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 266,
+            "y": 594,
+            "w": 168,
+            "h": 201
+          },
+          "score": 45,
+          "ethnicity": "Hombre Moreno",
+          "omitted": false,
+          "slot_status": "Annotated"
+        },
+        {
+          "box_index": 2,
+          "bbox": {
+            "x": 596,
+            "y": 604,
+            "w": 208,
+            "h": 180
+          },
+          "score": 15,
+          "ethnicity": "Hombre Moreno",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    },
+    "labio_superior": {
+      "label_id": 6,
+      "region_name": "Labio superior",
+      "region_alias": "Labio superior",
+      "expected_boxes": 1,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 375,
+            "y": 670,
+            "w": 295,
+            "h": 72
+          },
+          "score": 0,
+          "ethnicity": "Hombre Moreno",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    },
+    "comisuras_lineas_marioneta": {
+      "label_id": 7,
+      "region_name": "Comisuras / lineas de marioneta",
+      "region_alias": "Lineas marioneta",
+      "expected_boxes": 2,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 280,
+            "y": 720,
+            "w": 117,
+            "h": 217
+          },
+          "score": 15,
+          "ethnicity": "Hombre Moreno",
+          "omitted": false,
+          "slot_status": "Annotated"
+        },
+        {
+          "box_index": 2,
+          "bbox": {
+            "x": 631,
+            "y": 717,
+            "w": 154,
+            "h": 219
+          },
+          "score": 45,
+          "ethnicity": "Hombre Moreno",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    },
+    "puente_nasal": {
+      "label_id": 8,
+      "region_name": "Puente Nasal",
+      "region_alias": "Puente nasal",
+      "expected_boxes": 1,
+      "slots": [
+        {
+          "box_index": 1,
+          "bbox": {
+            "x": 466,
+            "y": 474,
+            "w": 100,
+            "h": 153
+          },
+          "score": 0,
+          "ethnicity": "Hombre Moreno",
+          "omitted": false,
+          "slot_status": "Annotated"
+        }
+      ]
+    }
+  },
+  "all_slots": [
+    {
+      "label_id": 1,
+      "region_key": "frente",
+      "region_name": "Frente",
+      "region_alias": "Frente",
+      "box_index": 1,
+      "bbox": {
+        "x": 289,
+        "y": 174,
+        "w": 472,
+        "h": 228
+      },
+      "score": 35,
+      "ethnicity": "Hombre Moreno",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 2,
+      "region_key": "glabela_entrecejo",
+      "region_name": "Glabela / Entrecejo",
+      "region_alias": "Entrecejo",
+      "box_index": 1,
+      "bbox": {
+        "x": 458,
+        "y": 377,
+        "w": 102,
+        "h": 111
+      },
+      "score": 35,
+      "ethnicity": "Hombre Moreno",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 3,
+      "region_key": "patas_de_gallo",
+      "region_name": "Patas de gallo",
+      "region_alias": "Patas de gallo",
+      "box_index": 1,
+      "bbox": {
+        "x": 239,
+        "y": 427,
+        "w": 98,
+        "h": 119
+      },
+      "score": 15,
+      "ethnicity": "Hombre Moreno",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 3,
+      "region_key": "patas_de_gallo",
+      "region_name": "Patas de gallo",
+      "region_alias": "Patas de gallo",
+      "box_index": 2,
+      "bbox": {
+        "x": 715,
+        "y": 425,
+        "w": 118,
+        "h": 131
+      },
+      "score": 0,
+      "ethnicity": "Hombre Moreno",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 4,
+      "region_key": "bajo_ojo_ojeras",
+      "region_name": "Bajo ojo / Ojeras",
+      "region_alias": "Ojeras",
+      "box_index": 1,
+      "bbox": {
+        "x": 296,
+        "y": 509,
+        "w": 159,
+        "h": 98
+      },
+      "score": 35,
+      "ethnicity": "Hombre Moreno",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 4,
+      "region_key": "bajo_ojo_ojeras",
+      "region_name": "Bajo ojo / Ojeras",
+      "region_alias": "Ojeras",
+      "box_index": 2,
+      "bbox": {
+        "x": 586,
+        "y": 511,
+        "w": 175,
+        "h": 99
+      },
+      "score": 35,
+      "ethnicity": "Hombre Moreno",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 5,
+      "region_key": "surcos_nasogenianos",
+      "region_name": "Surcos Nasogenianos",
+      "region_alias": "Surcos nasogenianos",
+      "box_index": 1,
+      "bbox": {
+        "x": 266,
+        "y": 594,
+        "w": 168,
+        "h": 201
+      },
+      "score": 45,
+      "ethnicity": "Hombre Moreno",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 5,
+      "region_key": "surcos_nasogenianos",
+      "region_name": "Surcos Nasogenianos",
+      "region_alias": "Surcos nasogenianos",
+      "box_index": 2,
+      "bbox": {
+        "x": 596,
+        "y": 604,
+        "w": 208,
+        "h": 180
+      },
+      "score": 15,
+      "ethnicity": "Hombre Moreno",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 6,
+      "region_key": "labio_superior",
+      "region_name": "Labio superior",
+      "region_alias": "Labio superior",
+      "box_index": 1,
+      "bbox": {
+        "x": 375,
+        "y": 670,
+        "w": 295,
+        "h": 72
+      },
+      "score": 0,
+      "ethnicity": "Hombre Moreno",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 7,
+      "region_key": "comisuras_lineas_marioneta",
+      "region_name": "Comisuras / lineas de marioneta",
+      "region_alias": "Lineas marioneta",
+      "box_index": 1,
+      "bbox": {
+        "x": 280,
+        "y": 720,
+        "w": 117,
+        "h": 217
+      },
+      "score": 15,
+      "ethnicity": "Hombre Moreno",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 7,
+      "region_key": "comisuras_lineas_marioneta",
+      "region_name": "Comisuras / lineas de marioneta",
+      "region_alias": "Lineas marioneta",
+      "box_index": 2,
+      "bbox": {
+        "x": 631,
+        "y": 717,
+        "w": 154,
+        "h": 219
+      },
+      "score": 45,
+      "ethnicity": "Hombre Moreno",
+      "omitted": false,
+      "slot_status": "Annotated"
+    },
+    {
+      "label_id": 8,
+      "region_key": "puente_nasal",
+      "region_name": "Puente Nasal",
+      "region_alias": "Puente nasal",
+      "box_index": 1,
+      "bbox": {
+        "x": 466,
+        "y": 474,
+        "w": 100,
+        "h": 153
+      },
+      "score": 0,
+      "ethnicity": "Hombre Moreno",
+      "omitted": false,
+      "slot_status": "Annotated"
+    }
+  ]
+}
