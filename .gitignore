@@ -218,3 +218,6 @@ __marimo__/
 # Annotation runtime artifacts
 .drive_cache/
 .drive_sessions/
+
+
+new_manifest.ipynb

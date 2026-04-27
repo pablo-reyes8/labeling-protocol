@@ -8,7 +8,6 @@ const ACTIVE_CLAIMS_FOLDER_NAME = "__active_claims";
 const CLAIM_TTL_MINUTES = 240;
 const IMAGE_NAME_REGEX = /\.(jpg|jpeg|png|webp|bmp|tif|tiff)$/i;
 const SOURCE_MANIFEST_FILE_PREFIX = "__source_manifest__";
-const SOURCE_MANIFEST_TTL_MINUTES = 720;
 
 function doPost(e) {
   try {
@@ -26,6 +25,9 @@ function doPost(e) {
     }
     if (action === "download_image") {
       return _handleDownloadImage(e);
+    }
+    if (action === "rebuild_source_manifest") {
+      return _handleRebuildSourceManifest(e);
     }
 
     return _handleSave(e);
@@ -50,6 +52,30 @@ function buildSourceManifestNow() {
     source_folder_id: sourceFolderId,
     image_count: images.length,
   };
+}
+
+function rebuildSourceManifestNow() {
+  return buildSourceManifestNow();
+}
+
+function _handleRebuildSourceManifest(e) {
+  const body = e && e.postData && e.postData.contents ? JSON.parse(e.postData.contents) : {};
+  const sourceFolderId = String(body.source_folder_id || SOURCE_IMAGES_FOLDER_ID || "").trim();
+  if (!sourceFolderId) {
+    return _json({ ok: false, error: "source_folder_id vacio" });
+  }
+
+  const annotationsFolder = DriveApp.getFolderById(FOLDER_ID);
+  const sourceFolder = DriveApp.getFolderById(sourceFolderId);
+  const images = _buildSourceManifestEntries(sourceFolder);
+  _writeSourceManifest(annotationsFolder, sourceFolderId, images, Date.now());
+
+  return _json({
+    ok: true,
+    source_folder_id: sourceFolderId,
+    image_count: images.length,
+    rebuilt: true,
+  });
 }
 
 function _handleClaim(e) {
@@ -292,21 +318,13 @@ function _sampleAvailableRemoteImages(sourceImages, labeledSet, activeClaimsSet,
 
 function _getSourceManifestEntries(annotationsFolder, sourceFolder, sourceFolderId) {
   const manifestFile = _getSourceManifestFile(annotationsFolder, sourceFolderId);
-  const nowMs = Date.now();
-  const ttlMs = SOURCE_MANIFEST_TTL_MINUTES * 60 * 1000;
 
   if (manifestFile) {
     try {
       const payload = JSON.parse(String(manifestFile.getBlob().getDataAsString() || ""));
       const manifestFolderId = String(payload.source_folder_id || "").trim();
-      const generatedAtMs = Number(payload.generated_at_ms || 0);
       const images = Array.isArray(payload.images) ? payload.images : [];
-      if (
-        manifestFolderId === sourceFolderId &&
-        generatedAtMs > 0 &&
-        nowMs - generatedAtMs <= ttlMs &&
-        images.length > 0
-      ) {
+      if (manifestFolderId === sourceFolderId && images.length > 0) {
         return images;
       }
     } catch (_err) {
@@ -315,7 +333,7 @@ function _getSourceManifestEntries(annotationsFolder, sourceFolder, sourceFolder
   }
 
   const rebuiltImages = _buildSourceManifestEntries(sourceFolder);
-  _writeSourceManifest(annotationsFolder, sourceFolderId, rebuiltImages, nowMs);
+  _writeSourceManifest(annotationsFolder, sourceFolderId, rebuiltImages, Date.now());
   return rebuiltImages;
 }
 

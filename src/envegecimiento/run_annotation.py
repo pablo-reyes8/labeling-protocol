@@ -37,6 +37,11 @@ _DRIVE_SERVICE_ACCOUNT_FILE = os.getenv("ANNOTATION_DRIVE_SERVICE_ACCOUNT_FILE",
 _DRIVE_DIRECT_DOWNLOAD_TIMEOUT_SECONDS = 30.0
 _DRIVE_TOKEN_LOCK = threading.Lock()
 _DRIVE_TOKEN_CACHE: dict[str, Any] = {"token": None, "expires_at": 0.0, "source": None}
+_DRIVE_PERSIST_SESSIONS = os.getenv("ANNOTATION_DRIVE_PERSIST_SESSIONS", "").strip().lower() in {
+    "1",
+    "true",
+    "yes",
+}
 
 
 def _env_int(name: str, default: int) -> int:
@@ -112,6 +117,16 @@ def _drive_session_file(source_folder_id: str, requested_count: int) -> Path:
     return _drive_sessions_dir() / f"{source_folder_id}_{requested_count}.json"
 
 
+def _clear_remote_drive_session_files(source_folder_id: str) -> None:
+    sessions_dir = _drive_sessions_dir()
+    pattern = f"{source_folder_id}_*.json"
+    for session_path in sessions_dir.glob(pattern):
+        try:
+            session_path.unlink()
+        except FileNotFoundError:
+            pass
+
+
 def _write_json_atomic(target_path: Path, payload: dict[str, Any]) -> None:
     temp_path = target_path.with_suffix(f"{target_path.suffix}.tmp")
     temp_path.write_text(
@@ -184,6 +199,8 @@ def _serialize_remote_drive_session_state(session_state: RemoteDriveSessionState
 
 
 def _save_remote_drive_session_state(session_state: RemoteDriveSessionState) -> None:
+    if not _DRIVE_PERSIST_SESSIONS:
+        return
     _write_json_atomic(
         session_state.session_file,
         _serialize_remote_drive_session_state(session_state),
@@ -195,6 +212,9 @@ def _load_remote_drive_session_state(
     source_folder_id: str,
     requested_count: int,
 ) -> RemoteDriveSessionState | None:
+    if not _DRIVE_PERSIST_SESSIONS:
+        return None
+
     if not session_file.exists():
         return None
 
@@ -241,6 +261,9 @@ def _claim_remote_drive_session_state(
     resolved_webapp_url = drive_webapp_url or DEFAULT_DRIVE_WEBAPP_URL
     resolved_api_token = DEFAULT_DRIVE_API_TOKEN if drive_api_token is None else drive_api_token
     session_file = _drive_session_file(source_folder_id, count)
+
+    if not _DRIVE_PERSIST_SESSIONS:
+        _clear_remote_drive_session_files(source_folder_id)
 
     loaded_session = _load_remote_drive_session_state(
         session_file=session_file,
@@ -395,6 +418,29 @@ def _post_drive_json_action(
         raise RuntimeError(f"Action remota '{action}' fallo: {parsed}")
 
     return parsed
+
+
+def rebuild_remote_drive_manifest(
+    source_folder_id: str | None = None,
+    drive_webapp_url: str | None = None,
+    drive_api_token: str | None = None,
+    timeout_seconds: float = 120.0,
+) -> dict[str, Any]:
+    resolved_webapp_url = drive_webapp_url or DEFAULT_DRIVE_WEBAPP_URL
+    resolved_api_token = DEFAULT_DRIVE_API_TOKEN if drive_api_token is None else drive_api_token
+    resolved_source_folder_id = str(
+        source_folder_id or DEFAULT_SOURCE_DRIVE_FOLDER_ID or ""
+    ).strip()
+    if not resolved_source_folder_id:
+        raise ValueError("`source_folder_id` esta vacio y no hay carpeta remota por defecto.")
+
+    return _post_drive_json_action(
+        action="rebuild_source_manifest",
+        payload={"source_folder_id": resolved_source_folder_id},
+        webapp_url=resolved_webapp_url,
+        api_token=resolved_api_token,
+        timeout_seconds=timeout_seconds,
+    )
 
 
 def _upload_json_to_drive_webapp(
